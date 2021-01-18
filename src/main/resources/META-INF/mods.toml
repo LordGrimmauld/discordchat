@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+#issueTrackerURL=""
+
+[[mods]]
+    modId="discordchat"
+    version="${file.jarVersion}"
+    displayName="Dicord Chat"
+    #updateJSONURL=""
+    authors="Grimmauld"
+    description='''
+Discord MC server chat integration'''
+
+[[dependencies.discordchat]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31.2.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.discordchat]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2,1.16)"
+    ordering="NONE"
+    side="BOTH"
