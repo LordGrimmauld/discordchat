@@ -1,20 +1,15 @@
 package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.doc.standard.CommandInfo;
-import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import mod.grimmauld.discordchat.commands.GrimmCommand;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.text.DecimalFormat;
 
-@CommandInfo(name = {CommandTPS.NAME})
-@Author("Grimmauld")
 public class CommandTPS extends GrimmCommand {
 	public static final String NAME = "tps";
 	private static final DecimalFormat df = new DecimalFormat("###.#");
-	private static final long[] UNLOADED = new long[]{0};
 
 	public CommandTPS() {
 		super(NAME);

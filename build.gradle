@@ -25,6 +25,7 @@ archivesBaseName = "${modid}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
+
 minecraft {
     mappings channel: 'snapshot', version: '20200514-1.15.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -71,14 +72,32 @@ minecraft {
     }
 }
 
+configurations {
+    shade
+}
+
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate 'net.dv8tion.jda', 'mod.grimmauld.discordchat.repack.jda'
+    relocate 'com.jagrosh.jdautilities', 'mod.grimmauld.discordchat.repack.jdautils'
+}
+
 repositories {
     jcenter()
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compile "net.dv8tion:JDA:$jda_version"
-    compile 'com.jagrosh:jda-utilities:3.0.1'
+
+    def jda = "net.dv8tion:JDA:$jda_version"
+    def jdautils = "com.jagrosh:jda-utilities-command:3.0.1"
+
+    implementation jda
+    implementation jdautils
+
+    shade jda
+    shade jdautils
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -99,3 +118,7 @@ jar {
 }
 
 jar.finalizedBy('reobfJar')
+
+reobf {
+    shadowJar {}
+}

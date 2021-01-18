@@ -2,11 +2,9 @@ package mod.grimmauld.discordchat.commands;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import mod.grimmauld.discordchat.discordCommand.AllDiscordCommands;
 
-@Author("Grimmauld")
 public  abstract class GrimmCommand extends Command {
 	private final boolean needsServer;
 
