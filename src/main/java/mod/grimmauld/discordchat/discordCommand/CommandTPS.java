@@ -1,17 +1,21 @@
 package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.text.DecimalFormat;
 
+
+@Author("Grimmauld")
 public class CommandTPS extends GrimmCommand {
 	public static final String NAME = "tps";
 	private static final DecimalFormat df = new DecimalFormat("###.#");
 
 	public CommandTPS() {
 		super(NAME);
+		help = "Displays minecraft server tps.";
 	}
 
 	private static long mean(long[] values) {

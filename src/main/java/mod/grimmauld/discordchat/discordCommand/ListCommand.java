@@ -1,16 +1,20 @@
 package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.List;
 
+
+@Author("Grimmauld")
 public class ListCommand extends GrimmCommand {
 	public static final String NAME = "list";
 
 	public ListCommand() {
 		super(NAME);
+		help = "Displays a list of all players currently on the server.";
 	}
 
 	@Override

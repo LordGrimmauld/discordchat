@@ -1,15 +1,19 @@
 package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
+import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordBot;
 import mod.grimmauld.discordchat.DiscordChat;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 
+
+@Author("Grimmauld")
 public class RunCommand extends GrimmCommand {
 	public static final String NAME = "run";
 
 	public RunCommand() {
 		super(NAME);
+		help = "Executes a given minecraft command. Depending on the command this might require an op role.";
 	}
 
 	@Override
