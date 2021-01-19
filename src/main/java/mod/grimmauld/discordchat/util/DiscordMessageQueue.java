@@ -27,7 +27,7 @@ public class DiscordMessageQueue {
 		if (msg.isEmpty())
 			return 1;
 
-		if (DiscordChat.INSTANCE == null || DiscordChat.INSTANCE.jda == null) {
+		if (DiscordChat.BOT_INSTANCE == null || DiscordChat.BOT_INSTANCE.jda == null) {
 			handleError("Can not send message to discord: jda not initialized", handlers);
 			return 1;
 		}
@@ -38,7 +38,7 @@ public class DiscordMessageQueue {
 			return 1;
 		}
 
-		MessageChannel channel = DiscordChat.INSTANCE.jda.getTextChannelById(channelId);
+		MessageChannel channel = DiscordChat.BOT_INSTANCE.jda.getTextChannelById(channelId);
 		if (channel == null) {
 			handleError("Channel " + channelId + " can't be found", handlers);
 			return 1;

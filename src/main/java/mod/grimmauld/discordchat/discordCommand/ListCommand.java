@@ -3,6 +3,8 @@ package mod.grimmauld.discordchat.discordCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
+import mod.grimmauld.discordchat.util.IPUtil;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.List;
@@ -21,9 +23,10 @@ public class ListCommand extends GrimmCommand {
 	protected void executeChecked(CommandEvent event) {
 		List<ServerPlayerEntity> players = DiscordChat.SERVER_INSTANCE.getPlayerList().getPlayers();
 		StringBuilder builder = new StringBuilder();
-		builder.append("Server has ").append(players.size()).append(" players online\n\n");
+		EmbedBuilder eb = new EmbedBuilder();
+		eb.setTitle("Players on Server");
 		players.forEach(p -> builder.append(p.getDisplayName().getString()).append("\n"));
-
-		event.getChannel().sendMessage(builder.toString()).submit();
+		eb.addField("Server has " + players.size() + " players online", builder.toString(), true);
+		event.getChannel().sendMessage(eb.build()).submit();
 	}
 }

@@ -15,9 +15,9 @@ import org.apache.logging.log4j.Logger;
 public class DiscordChat {
 	public static final String MODID = "discordchat";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
-	public static DiscordBot INSTANCE = null;
-	public static MinecraftServer SERVER_INSTANCE = null;
 	private static final EventListener listener = new EventListener();
+	public static DiscordBot BOT_INSTANCE = null;
+	public static MinecraftServer SERVER_INSTANCE = null;
 
 	public DiscordChat() {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
@@ -27,11 +27,11 @@ public class DiscordChat {
 	}
 
 	public static int relaunchBot(String token) {
-		if (INSTANCE != null)
-			INSTANCE.shutdown();
-		INSTANCE = new DiscordBot(token);
+		if (BOT_INSTANCE != null)
+			BOT_INSTANCE.shutdown();
+		BOT_INSTANCE = new DiscordBot(token);
 		AllDiscordCommands.restartCommandClient();
-        listener.resetSyncCycle();
+		listener.resetSyncCycle();
 		return 1;
 	}
 }
