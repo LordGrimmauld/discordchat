@@ -2,11 +2,11 @@ package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.commands.AllCommands;
 import mod.grimmauld.discordchat.util.DiscordMessageQueue;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.world.GameRules;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
@@ -44,17 +44,19 @@ public class EventListener {
 	}
 
 	@SubscribeEvent
-	public void playerJoinEvent(EntityJoinWorldEvent event) {
-		if (event.getWorld().isRemote)
-			return;
-		Entity e = event.getEntity();
-		if (!(e instanceof PlayerEntity))
-			return;
-		DiscordMessageQueue.INSTANCE.queue(e.getName().getString() + " joined the game", DiscordChat.LOGGER::warn);
+	public void playerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
+		DiscordMessageQueue.INSTANCE.queue(event.getPlayer().getName().getString() + " joined the game", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
 	public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-		DiscordMessageQueue.INSTANCE.send(event.getPlayer().getName().getString() + " left the game", Collections.singleton(DiscordChat.LOGGER::warn));
+		DiscordMessageQueue.send(event.getPlayer().getName().getString() + " left the game", Collections.singleton(DiscordChat.LOGGER::warn));
+	}
+
+	@SubscribeEvent
+	public void playerDieEvent(LivingDeathEvent event) {
+		if (!(event.getEntity() instanceof ServerPlayerEntity) || !event.getEntity().world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES))
+			return;
+		DiscordMessageQueue.send(((ServerPlayerEntity) event.getEntity()).getCombatTracker().getDeathMessage().getString(), Collections.singleton(DiscordChat.LOGGER::warn));
 	}
 }
