@@ -81,6 +81,8 @@ shadowJar {
     configurations = [project.configurations.shade]
     relocate 'net.dv8tion.jda', 'mod.grimmauld.discordchat.repack.jda'
     relocate 'com.jagrosh.jdautilities', 'mod.grimmauld.discordchat.repack.jdautils'
+    relocate 'gnu.trove', 'mod.grimmauld.discordchat.repack.trove'
+    relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
 }
 
 repositories {
@@ -92,12 +94,15 @@ dependencies {
 
     def jda = "net.dv8tion:JDA:$jda_version"
     def jdautils = "com.jagrosh:jda-utilities-command:3.0.1"
+    def trove = "net.sf.trove4j:trove4j:3.0.3"
 
     implementation jda
     implementation jdautils
+    implementation trove
 
     shade jda
     shade jdautils
+    shade trove
 }
 
 compileJava.options.encoding = 'UTF-8'

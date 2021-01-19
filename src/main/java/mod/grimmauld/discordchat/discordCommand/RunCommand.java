@@ -10,7 +10,7 @@ public class RunCommand extends GrimmCommand {
 	public static final String NAME = "run";
 
 	public RunCommand() {
-		super(NAME, true);
+		super(NAME);
 	}
 
 	@Override

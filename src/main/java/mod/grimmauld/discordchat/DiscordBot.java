@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
@@ -41,13 +40,6 @@ public class DiscordBot extends ListenerAdapter {
 		jda = tmpJDA;
 	}
 
-	private static void sendChatMsgDiscordToMC(ServerPlayerEntity player, Message msg) {
-		if (!msg.getContentStripped().isEmpty())
-			player.sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + msg.getAuthor().getName() + TextFormatting.WHITE + "] " + msg.getContentStripped()));
-		msg.getAttachments().forEach(attachment -> player.sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + msg.getAuthor().getName() + TextFormatting.WHITE + "] Uploaded a file: ").appendSibling(new StringTextComponent(attachment.getUrl()).applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.UNDERLINE).applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))))
-		);
-	}
-
 	public static boolean isOp(Member member) {
 		return !member.getUser().isBot() && member.getRoles().stream().anyMatch(role -> role.getName().equals(Config.OP_ROLE_NAME.get()));
 	}
@@ -59,7 +51,9 @@ public class DiscordBot extends ListenerAdapter {
 		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot() || DiscordChat.SERVER_INSTANCE == null)
 			return;
 
-		DiscordChat.SERVER_INSTANCE.getPlayerList().getPlayers().forEach(serverPlayerEntity -> sendChatMsgDiscordToMC(serverPlayerEntity, msg));
+		if (!msg.getContentStripped().isEmpty())
+			DiscordChat.SERVER_INSTANCE.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + msg.getAuthor().getName() + TextFormatting.WHITE + "] " + msg.getContentStripped()));
+		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + msg.getAuthor().getName() + TextFormatting.WHITE + "] Uploaded a file: ").appendSibling(new StringTextComponent(attachment.getUrl()).applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.UNDERLINE).applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl()))))));
 	}
 
 	public void shutdown() {

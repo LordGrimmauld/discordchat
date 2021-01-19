@@ -19,7 +19,12 @@ public class EventListener {
 			return;
 		if (DiscordChat.INSTANCE.jda == null)
 			return;
-		MessageChannel channel = DiscordChat.INSTANCE.jda.getTextChannelById(Config.REDIRECT_CHANNEL_ID.get());
+		String channelId = Config.REDIRECT_CHANNEL_ID.get();
+		if (channelId.isEmpty()) {
+			DiscordChat.LOGGER.error("Channel Id may not be empty!");
+			return;
+		}
+		MessageChannel channel = DiscordChat.INSTANCE.jda.getTextChannelById(channelId);
 		if (channel == null)
 			return;
 

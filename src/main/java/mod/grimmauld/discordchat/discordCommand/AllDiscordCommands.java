@@ -19,6 +19,7 @@ public class AllDiscordCommands {
 	public static final Command TPS_COMMAND = new CommandTPS();
 	public static final Command WHITELIST_COMMAND = new WhitelistCommand();
 	public static final Command RUN_COMMAND = new RunCommand();
+	public static final Command LIST_COMMAND = new ListCommand();
 
 	static {
 		builder.setOwnerId("533668542562828311");

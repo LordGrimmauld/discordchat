@@ -7,7 +7,7 @@ public class WhitelistCommand extends GrimmCommand {
 	public static final String NAME = "whitelist";
 
 	public WhitelistCommand() {
-		super(NAME, false);
+		super(NAME, false, true);
 	}
 
 	@Override
