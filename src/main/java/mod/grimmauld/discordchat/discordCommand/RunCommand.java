@@ -3,7 +3,6 @@ package mod.grimmauld.discordchat.discordCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import mod.grimmauld.discordchat.DiscordBot;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.commands.GrimmCommand;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 
 public class RunCommand extends GrimmCommand {

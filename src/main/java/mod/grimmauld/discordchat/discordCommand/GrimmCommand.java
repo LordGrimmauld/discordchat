@@ -1,12 +1,11 @@
-package mod.grimmauld.discordchat.commands;
+package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.discordCommand.AllDiscordCommands;
 
-public  abstract class GrimmCommand extends Command {
+public abstract class GrimmCommand extends Command {
 	private final boolean needsServer;
 	private final boolean global;
 

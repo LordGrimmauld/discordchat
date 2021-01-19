@@ -7,8 +7,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+
+import java.util.Collections;
 
 
 @SuppressWarnings("unused")
@@ -47,6 +50,11 @@ public class EventListener {
 		Entity e = event.getEntity();
 		if (!(e instanceof PlayerEntity))
 			return;
-		DiscordMessageQueue.INSTANCE.queue(e.getName().getString() + " joined the world", DiscordChat.LOGGER::warn);
+		DiscordMessageQueue.INSTANCE.queue(e.getName().getString() + " joined the game", DiscordChat.LOGGER::warn);
+	}
+
+	@SubscribeEvent
+	public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+		DiscordMessageQueue.INSTANCE.send(event.getPlayer().getName().getString() + " left the game", Collections.singleton(DiscordChat.LOGGER::warn));
 	}
 }

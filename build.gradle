@@ -93,16 +93,13 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     def jda = "net.dv8tion:JDA:$jda_version"
-    def jdautils = "com.jagrosh:jda-utilities-command:3.0.1"
-    def trove = "net.sf.trove4j:trove4j:3.0.3"
+    def jdautils = "com.jagrosh:jda-utilities:3.0.1"
 
     implementation jda
     implementation jdautils
-    implementation trove
 
     shade jda
     shade jdautils
-    shade trove
 }
 
 compileJava.options.encoding = 'UTF-8'

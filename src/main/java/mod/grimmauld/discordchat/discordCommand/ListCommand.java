@@ -2,7 +2,6 @@ package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.commands.GrimmCommand;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
 import java.util.List;

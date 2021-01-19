@@ -2,7 +2,6 @@ package mod.grimmauld.discordchat.discordCommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.commands.GrimmCommand;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.text.DecimalFormat;

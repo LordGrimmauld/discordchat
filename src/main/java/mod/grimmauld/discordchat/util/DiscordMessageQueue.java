@@ -23,7 +23,7 @@ public class DiscordMessageQueue {
 		}
 	}
 
-	private int send(String msg, Collection<Consumer<String>> handlers) {
+	public static int send(String msg, Collection<Consumer<String>> handlers) {
 		if (msg.isEmpty())
 			return 1;
 
@@ -44,21 +44,21 @@ public class DiscordMessageQueue {
 			return 1;
 		}
 
-		channel.sendMessage(builder.toString()).submit();
+		channel.sendMessage(msg).submit();
 		return 0;
 	}
 
-	public void queue(String msg, @Nullable Consumer<String> errorConsumer) {
+	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {
 		if (Config.SYNC_RATE.get() == 0) {
 			send(msg, Collections.singletonList(errorConsumer));
-			return;
+		} else {
+			builder.append(msg).append("\n");
+			errorHooks.add(errorConsumer);
 		}
-
-		builder.append(msg).append("\n");
-		errorHooks.add(errorConsumer);
+		return 0;
 	}
 
-	private void handleError(String errorMsg, Collection<Consumer<String>> handlers) {
+	private static void handleError(String errorMsg, Collection<Consumer<String>> handlers) {
 		handlers.forEach(stringConsumer -> {
 			if (stringConsumer != null)
 				stringConsumer.accept(errorMsg);
