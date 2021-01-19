@@ -35,4 +35,10 @@ public  abstract class GrimmCommand extends Command {
 	}
 
 	protected abstract void executeChecked(CommandEvent event);
+
+	protected void sendResponse(CommandEvent event, String msg) {
+		if (msg.isEmpty())
+			return;
+		event.getChannel().sendMessage(msg).submit();
+	}
 }

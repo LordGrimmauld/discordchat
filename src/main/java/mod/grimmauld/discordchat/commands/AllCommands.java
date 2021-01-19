@@ -8,5 +8,6 @@ import net.minecraft.command.Commands;
 public class AllCommands {
 	public static void register(CommandDispatcher<CommandSource> commandDispatcher) {
 		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(ReloadBotCommand.register()));
+		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(TellDiscordCommand.register()));
 	}
 }

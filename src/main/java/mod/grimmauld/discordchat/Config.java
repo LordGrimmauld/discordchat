@@ -13,6 +13,7 @@ public class Config {
 	public static ForgeConfigSpec.ConfigValue<String> TOKEN;
 	public static ForgeConfigSpec.ConfigValue<String> OP_ROLE_NAME;
 	public static ForgeConfigSpec.ConfigValue<String> REDIRECT_CHANNEL_ID;
+	public static ForgeConfigSpec.IntValue SYNC_RATE;
 
 	static {
 		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
@@ -29,6 +30,7 @@ public class Config {
 		PREFIX = common_builder.comment("Discord Bot Prefix").define("prefix", "/");
 		OP_ROLE_NAME = common_builder.comment("Name of the role empowering people to use operator commands").define("role", "op");
 		REDIRECT_CHANNEL_ID = common_builder.comment("Channel to redirect messages to and from the server").define("channel", "");
+		SYNC_RATE = common_builder.comment("Discord sync rate (MC > discord)").defineInRange("sync", 30, 0, 1000);
 	}
 
 	public static void loadConfig(ForgeConfigSpec spec, Path path) {

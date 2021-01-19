@@ -18,7 +18,6 @@ public class RunCommand extends GrimmCommand {
 		StringBuilder builder = new StringBuilder();
 		DiscordChat.SERVER_INSTANCE.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(DiscordChat.SERVER_INSTANCE.getCommandSource().withPermissionLevel(DiscordBot.isOp(event.getMember()) ? 2 : 0),
 			text -> builder.append(text.getString()).append("\n")), event.getMessage().getContentStripped().replaceFirst("([^ ])* ", ""));
-
-		event.getChannel().sendMessage(builder.toString()).submit();
+		sendResponse(event, builder.toString());
 	}
 }

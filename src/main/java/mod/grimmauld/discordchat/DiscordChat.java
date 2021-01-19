@@ -13,23 +13,25 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(DiscordChat.MODID)
 public class DiscordChat {
-    public static final String MODID = "discordchat";
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
-    public static DiscordBot INSTANCE = null;
-    public static MinecraftServer SERVER_INSTANCE = null;
+	public static final String MODID = "discordchat";
+	public static final Logger LOGGER = LogManager.getLogger(MODID);
+	public static DiscordBot INSTANCE = null;
+	public static MinecraftServer SERVER_INSTANCE = null;
+	private static final EventListener listener = new EventListener();
 
-    public static int relaunchBot(String token) {
-        if (INSTANCE != null)
-            INSTANCE.shutdown();
-        INSTANCE = new DiscordBot(token);
-        AllDiscordCommands.restartCommandClient();
-        return 1;
-    }
+	public DiscordChat() {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+		MinecraftForge.EVENT_BUS.register(listener);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(Config::onConfigReloadLoad);
+		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
+	}
 
-    public DiscordChat() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-        MinecraftForge.EVENT_BUS.register(new EventListener());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(Config::onConfigReloadLoad);
-        Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
-    }
+	public static int relaunchBot(String token) {
+		if (INSTANCE != null)
+			INSTANCE.shutdown();
+		INSTANCE = new DiscordBot(token);
+		AllDiscordCommands.restartCommandClient();
+        listener.resetSyncCycle();
+		return 1;
+	}
 }

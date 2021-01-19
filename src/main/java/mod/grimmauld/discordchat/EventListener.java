@@ -1,12 +1,20 @@
 package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.commands.AllCommands;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import mod.grimmauld.discordchat.util.DiscordMessageQueue;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
+
+@SuppressWarnings("unused")
 public class EventListener {
+	private int tickSyncCycle = Config.SYNC_RATE.get();
+
 	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE = event.getServer();
@@ -15,21 +23,30 @@ public class EventListener {
 
 	@SubscribeEvent
 	public void chatEvent(ServerChatEvent event) {
-		if (DiscordChat.INSTANCE == null)
-			return;
-		if (DiscordChat.INSTANCE.jda == null)
-			return;
-		String channelId = Config.REDIRECT_CHANNEL_ID.get();
-		if (channelId.isEmpty()) {
-			DiscordChat.LOGGER.error("Channel Id may not be empty!");
-			return;
+		DiscordMessageQueue.INSTANCE.queue("**[MC " + event.getUsername() + "]** " + event.getMessage().replaceAll("@", "@ "), DiscordChat.LOGGER::warn);
+	}
+
+	@SubscribeEvent
+	public void serverTickEvent(TickEvent.ServerTickEvent event) {
+		tickSyncCycle--;
+		if (tickSyncCycle == 0) {
+			resetSyncCycle();
+			DiscordMessageQueue.INSTANCE.send();
 		}
-		MessageChannel channel = DiscordChat.INSTANCE.jda.getTextChannelById(channelId);
-		if (channel == null)
+	}
+
+	public void resetSyncCycle() {
+		int syncRate = Config.SYNC_RATE.get();
+		tickSyncCycle = syncRate > 0 ? syncRate : -1;
+	}
+
+	@SubscribeEvent
+	public void playerJoinEvent(EntityJoinWorldEvent event) {
+		if (event.getWorld().isRemote)
 			return;
-
-		String msg = "[MC " + event.getUsername() + "] " + event.getMessage().replaceAll("@", "@ ");
-		channel.sendMessage(msg).queue();
-
+		Entity e = event.getEntity();
+		if (!(e instanceof PlayerEntity))
+			return;
+		DiscordMessageQueue.INSTANCE.queue(e.getName().getString() + " joined the world", DiscordChat.LOGGER::warn);
 	}
 }
