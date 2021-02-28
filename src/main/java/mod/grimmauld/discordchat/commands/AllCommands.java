@@ -10,4 +10,7 @@ public class AllCommands {
 		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(ReloadBotCommand.register()));
 		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(TellDiscordCommand.register()));
 	}
+
+	private AllCommands() {
+	}
 }

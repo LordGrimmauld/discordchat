@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.discordCommand;
+package mod.grimmauld.discordchat.discordcommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
@@ -38,7 +38,6 @@ public class EntityListCommand extends GrimmCommand {
 		DiscordChat.SERVER_INSTANCE.getWorlds().forEach(world -> {
 			StringBuilder builder = new StringBuilder();
 			world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getPosX()).append(" ").append((int) entity.getPosY()).append(" ").append((int) entity.getPosZ()).append("\n"));
-			System.out.println(builder.toString());
 			eb.addField("Entities in " + world.getDimension().getType().getRegistryName(), builder.toString(), true);
 		});
 		event.getChannel().sendMessage(eb.build()).submit();

@@ -1,7 +1,7 @@
 package mod.grimmauld.discordchat;
 
-import mod.grimmauld.discordchat.discordCommand.AllDiscordCommands;
-import mod.grimmauld.discordchat.discordCommand.WhitelistCommand;
+import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
+import mod.grimmauld.discordchat.discordcommand.WhitelistCommand;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

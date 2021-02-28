@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.discordCommand;
+package mod.grimmauld.discordchat.discordcommand;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandClient;
@@ -40,5 +40,8 @@ public class AllDiscordCommands {
 	public static void restartCommandClient() {
 		builder.setPrefix(Config.PREFIX.get());
 		client = new LazyValue<>(builder::build);
+	}
+
+	private AllDiscordCommands() {
 	}
 }

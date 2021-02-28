@@ -40,7 +40,7 @@ public class EventListener {
 
 	@SubscribeEvent
 	public void chatEvent(ServerChatEvent event) {
-		DiscordMessageQueue.INSTANCE.queue("**[MC " + event.getUsername() + "]** " + event.getMessage().replaceAll("@", "@ "), DiscordChat.LOGGER::warn);
+		DiscordMessageQueue.INSTANCE.queue("**[MC " + event.getUsername() + "]** " + event.getMessage().replace("@", "@ "), DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent

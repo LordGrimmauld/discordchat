@@ -8,29 +8,25 @@ import net.minecraftforge.fml.config.ModConfig;
 import java.nio.file.Path;
 
 public class Config {
-	public static ForgeConfigSpec COMMON_CONFIG;
-	public static ForgeConfigSpec.ConfigValue<String> PREFIX;
-	public static ForgeConfigSpec.ConfigValue<String> TOKEN;
-	public static ForgeConfigSpec.ConfigValue<String> OP_ROLE_NAME;
-	public static ForgeConfigSpec.ConfigValue<String> REDIRECT_CHANNEL_ID;
-	public static ForgeConfigSpec.IntValue SYNC_RATE;
+	public static final ForgeConfigSpec COMMON_CONFIG;
+	public static final ForgeConfigSpec.ConfigValue<String> PREFIX;
+	public static final ForgeConfigSpec.ConfigValue<String> TOKEN;
+	public static final ForgeConfigSpec.ConfigValue<String> OP_ROLE_NAME;
+	public static final ForgeConfigSpec.ConfigValue<String> REDIRECT_CHANNEL_ID;
+	public static final ForgeConfigSpec.IntValue SYNC_RATE;
 
 	static {
-		ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
+		ForgeConfigSpec.Builder commonBuilder = new ForgeConfigSpec.Builder();
 
-		COMMON_BUILDER.comment("General settings").push("general");
-		setupGeneralConfig(COMMON_BUILDER);
-		COMMON_BUILDER.pop();
+		commonBuilder.comment("General settings").push("general");
+		TOKEN = commonBuilder.comment("Discord Bot token").define("token", "");
+		PREFIX = commonBuilder.comment("Discord Bot Prefix").define("prefix", "/");
+		OP_ROLE_NAME = commonBuilder.comment("Name of the role empowering people to use operator commands").define("role", "op");
+		REDIRECT_CHANNEL_ID = commonBuilder.comment("Channel to redirect messages to and from the server").define("channel", "");
+		SYNC_RATE = commonBuilder.comment("Discord sync rate (MC > discord)").defineInRange("sync", 30, 0, 1000);
+		commonBuilder.pop();
 
-		COMMON_CONFIG = COMMON_BUILDER.build();
-	}
-
-	private static void setupGeneralConfig(ForgeConfigSpec.Builder common_builder) {
-		TOKEN = common_builder.comment("Discord Bot token").define("token", "");
-		PREFIX = common_builder.comment("Discord Bot Prefix").define("prefix", "/");
-		OP_ROLE_NAME = common_builder.comment("Name of the role empowering people to use operator commands").define("role", "op");
-		REDIRECT_CHANNEL_ID = common_builder.comment("Channel to redirect messages to and from the server").define("channel", "");
-		SYNC_RATE = common_builder.comment("Discord sync rate (MC > discord)").defineInRange("sync", 30, 0, 1000);
+		COMMON_CONFIG = commonBuilder.build();
 	}
 
 	public static void loadConfig(ForgeConfigSpec spec, Path path) {
@@ -42,5 +38,8 @@ public class Config {
 
 	public static void onConfigReloadLoad(ModConfig.Reloading event) {
 		DiscordChat.relaunchBot(TOKEN.get());
+	}
+
+	private Config() {
 	}
 }

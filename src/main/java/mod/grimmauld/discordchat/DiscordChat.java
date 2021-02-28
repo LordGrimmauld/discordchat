@@ -1,6 +1,6 @@
 package mod.grimmauld.discordchat;
 
-import mod.grimmauld.discordchat.discordCommand.AllDiscordCommands;
+import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;

@@ -13,4 +13,7 @@ public class ReloadBotCommand {
 			.requires(cs -> cs.hasPermissionLevel(2))
 			.executes(ctx -> DiscordChat.relaunchBot(Config.TOKEN.get()));
 	}
+
+	private ReloadBotCommand() {
+	}
 }

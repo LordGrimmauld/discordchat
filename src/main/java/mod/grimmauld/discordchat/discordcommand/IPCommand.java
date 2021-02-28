@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.discordCommand;
+package mod.grimmauld.discordchat.discordcommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;

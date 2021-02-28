@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.discordCommand;
+package mod.grimmauld.discordchat.discordcommand;
 
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
@@ -31,7 +31,7 @@ public class TpsCommand extends GrimmCommand {
 	@Override
 	protected void executeChecked(CommandEvent event) {
 		double meanTickTime = mean(DiscordChat.SERVER_INSTANCE.tickTimeArray) * 1.0E-6D;
-		double meanTPS = Math.min(1000.0 / meanTickTime, 20);
+		double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
 		double x = MathHelper.clamp((meanTPS - 5) / 15, 0, 1);
 
 		EmbedBuilder eb = new EmbedBuilder();

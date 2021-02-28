@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.discordCommand;
+package mod.grimmauld.discordchat.discordcommand;
 
 import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
@@ -13,14 +13,14 @@ public abstract class GrimmCommand extends Command {
 	private final boolean global;
 
 
-	public GrimmCommand(String name, boolean needsServer, boolean global) {
+	protected GrimmCommand(String name, boolean needsServer, boolean global) {
 		this.name = name;
 		this.needsServer = needsServer;
 		this.global = global;
 		AllDiscordCommands.register(this);
 	}
 
-	public GrimmCommand(String name) {
+	protected GrimmCommand(String name) {
 		this(name, true, false);
 	}
 
