@@ -2,21 +2,35 @@ package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.commands.AllCommands;
 import mod.grimmauld.discordchat.util.DiscordMessageQueue;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-
-import java.util.Collections;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 
 
 @SuppressWarnings("unused")
 public class EventListener {
 	private int tickSyncCycle = Config.SYNC_RATE.get();
+
+	public static void onServerStarted(FMLServerStartedEvent event) {
+		DiscordChat.relaunchBot(Config.TOKEN.get());
+	}
+
+	public static void onServerStopped(FMLServerStoppedEvent event) {
+		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
+		DiscordMessageQueue.INSTANCE.send();
+		if (DiscordChat.BOT_INSTANCE != null)
+			DiscordChat.BOT_INSTANCE.shutdown();
+	}
 
 	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
@@ -50,13 +64,21 @@ public class EventListener {
 
 	@SubscribeEvent
 	public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-		DiscordMessageQueue.send(event.getPlayer().getName().getString() + " left the game", Collections.singleton(DiscordChat.LOGGER::warn));
+		DiscordMessageQueue.INSTANCE.queue(event.getPlayer().getName().getString() + " left the game", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
 	public void playerDieEvent(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayerEntity) || !event.getEntity().world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES))
 			return;
-		DiscordMessageQueue.send(((ServerPlayerEntity) event.getEntity()).getCombatTracker().getDeathMessage().getString(), Collections.singleton(DiscordChat.LOGGER::warn));
+		DiscordMessageQueue.INSTANCE.queue(((ServerPlayerEntity) event.getEntity()).getCombatTracker().getDeathMessage().getString(), DiscordChat.LOGGER::warn);
+	}
+
+	@SubscribeEvent
+	public void advancementEvent(AdvancementEvent event) {
+		Advancement advancement = event.getAdvancement();
+		if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceToChat() && event.getPlayer().world.getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)) {
+			DiscordMessageQueue.INSTANCE.queue(new TranslationTextComponent("chat.type.advancement." + advancement.getDisplay().getFrame().getName(), event.getPlayer().getDisplayName(), advancement.getDisplayText()).getString().replace("[", "**[").replace("]", "]**"), DiscordChat.LOGGER::warn);
+		}
 	}
 }

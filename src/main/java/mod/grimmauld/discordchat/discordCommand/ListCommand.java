@@ -3,7 +3,6 @@ package mod.grimmauld.discordchat.discordCommand;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.util.IPUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.minecraft.entity.player.ServerPlayerEntity;
 

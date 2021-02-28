@@ -21,6 +21,7 @@ public class AllDiscordCommands {
 	public static final Command RUN_COMMAND = new RunCommand();
 	public static final Command LIST_COMMAND = new ListCommand();
 	public static final Command IP_COMMAND = new IPCommand();
+	public static final Command ENTITY_LIST_COMMAND = new EntityListCommand();
 
 	static {
 		builder.setOwnerId("533668542562828311");

@@ -1,16 +1,20 @@
 package mod.grimmauld.discordchat.util;
 
+import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class DiscordMessageQueue {
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
 	public static DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
@@ -23,45 +27,41 @@ public class DiscordMessageQueue {
 		}
 	}
 
-	public static int send(String msg, Collection<Consumer<String>> handlers) {
+	private static int send(String msg, Collection<Consumer<String>> handlers) {
 		if (msg.isEmpty())
 			return 1;
 
-		if (DiscordChat.BOT_INSTANCE == null || DiscordChat.BOT_INSTANCE.jda == null) {
-			handleError("Can not send message to discord: jda not initialized", handlers);
-			return 1;
-		}
+		if (DiscordChat.BOT_INSTANCE == null || DiscordChat.BOT_INSTANCE.jda == null)
+			return handleError("Can not send message to discord: jda not initialized", handlers);
 
 		String channelId = Config.REDIRECT_CHANNEL_ID.get();
-		if (channelId.isEmpty()) {
-			handleError("Channel Id may not be empty!", handlers);
-			return 1;
-		}
+		if (channelId.isEmpty())
+			return handleError("Channel Id may not be empty!", handlers);
 
 		MessageChannel channel = DiscordChat.BOT_INSTANCE.jda.getTextChannelById(channelId);
-		if (channel == null) {
-			handleError("Channel " + channelId + " can't be found", handlers);
-			return 1;
-		}
+		if (channel == null)
+			return handleError("Channel " + channelId + " can't be found", handlers);
 
 		channel.sendMessage(msg).submit();
 		return 0;
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {
-		if (Config.SYNC_RATE.get() == 0) {
-			send(msg, Collections.singletonList(errorConsumer));
-		} else {
-			builder.append(msg).append("\n");
+		if (Config.SYNC_RATE.get() == 0)
+			return send(msg, Collections.singletonList(errorConsumer));
+		if (builder.length() + msg.length() > 2000)
+			send();
+		builder.append(msg).append("\n");
+		if (errorConsumer != null)
 			errorHooks.add(errorConsumer);
-		}
 		return 0;
 	}
 
-	private static void handleError(String errorMsg, Collection<Consumer<String>> handlers) {
+	private static int handleError(String errorMsg, Collection<Consumer<String>> handlers) {
 		handlers.forEach(stringConsumer -> {
 			if (stringConsumer != null)
 				stringConsumer.accept(errorMsg);
 		});
+		return 1;
 	}
 }

@@ -41,6 +41,11 @@ public abstract class GrimmCommand extends Command {
 	protected void sendResponse(CommandEvent event, String msg) {
 		if (msg.isEmpty())
 			return;
+
+		while (msg.length() > 1990) {
+			event.getChannel().sendMessage(msg.substring(0, 1990)).submit();
+			msg = msg.substring(1990);
+		}
 		event.getChannel().sendMessage(msg).submit();
 	}
 }
