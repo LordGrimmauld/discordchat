@@ -4,7 +4,6 @@ import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
 import mod.grimmauld.discordchat.util.DiscordBotContainer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;

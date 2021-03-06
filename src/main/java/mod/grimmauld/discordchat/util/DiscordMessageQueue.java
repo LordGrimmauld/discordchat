@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 public class DiscordMessageQueue {
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
-	public static DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
+	public static final DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
 	private StringBuilder builder = new StringBuilder();
 
 	public void send() {
