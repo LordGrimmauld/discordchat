@@ -20,6 +20,10 @@ public class DiscordBot extends ListenerAdapter {
 	@Nullable
 	public final JDA jda;
 
+	public DiscordBot() {
+		this(Config.TOKEN.get());
+	}
+
 	public DiscordBot(String token) {
 		@Nullable JDA tmpJDA;
 		try {

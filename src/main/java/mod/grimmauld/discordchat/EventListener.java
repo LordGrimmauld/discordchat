@@ -22,14 +22,13 @@ public class EventListener {
 	private int tickSyncCycle = Config.SYNC_RATE.get();
 
 	public static void onServerStarted(FMLServerStartedEvent event) {
-		DiscordChat.relaunchBot(Config.TOKEN.get());
+		DiscordChat.relaunchBot();
 	}
 
 	public static void onServerStopped(FMLServerStoppedEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
 		DiscordMessageQueue.INSTANCE.send();
-		if (DiscordChat.BOT_INSTANCE != null)
-			DiscordChat.BOT_INSTANCE.shutdown();
+		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
 	}
 
 	@SubscribeEvent

@@ -1,8 +1,10 @@
 package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
+import mod.grimmauld.discordchat.util.DiscordBotContainer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -16,7 +18,7 @@ public class DiscordChat {
 	public static final String MODID = "discordchat";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	private static final EventListener listener = new EventListener();
-	public static DiscordBot BOT_INSTANCE = null;
+	public static final DiscordBotContainer BOT_INSTANCE = new DiscordBotContainer();
 	public static MinecraftServer SERVER_INSTANCE = null;
 
 	public DiscordChat() {
@@ -28,10 +30,8 @@ public class DiscordChat {
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
 	}
 
-	public static int relaunchBot(String token) {
-		if (BOT_INSTANCE != null)
-			BOT_INSTANCE.shutdown();
-		BOT_INSTANCE = new DiscordBot(token);
+	public static int relaunchBot() {
+		BOT_INSTANCE.connectBot(DiscordBot::new);
 		AllDiscordCommands.restartCommandClient();
 		listener.resetSyncCycle();
 		return 1;

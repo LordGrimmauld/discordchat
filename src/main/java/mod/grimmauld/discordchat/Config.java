@@ -33,11 +33,11 @@ public class Config {
 		final CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave().writingMode(WritingMode.REPLACE).build();
 		configData.load();
 		spec.setConfig(configData);
-		DiscordChat.relaunchBot(TOKEN.get());
+		DiscordChat.relaunchBot();
 	}
 
 	public static void onConfigReloadLoad(ModConfig.Reloading event) {
-		DiscordChat.relaunchBot(TOKEN.get());
+		DiscordChat.relaunchBot();
 	}
 
 	private Config() {

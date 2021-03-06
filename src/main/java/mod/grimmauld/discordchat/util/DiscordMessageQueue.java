@@ -31,19 +31,18 @@ public class DiscordMessageQueue {
 		if (msg.isEmpty())
 			return 1;
 
-		if (DiscordChat.BOT_INSTANCE == null || DiscordChat.BOT_INSTANCE.jda == null)
-			return handleError("Can not send message to discord: jda not initialized", handlers);
+		return DiscordChat.BOT_INSTANCE.ifJDAPresent(jda -> {
+			String channelId = Config.REDIRECT_CHANNEL_ID.get();
+			if (channelId.isEmpty())
+				return handleError("Channel Id may not be empty!", handlers);
 
-		String channelId = Config.REDIRECT_CHANNEL_ID.get();
-		if (channelId.isEmpty())
-			return handleError("Channel Id may not be empty!", handlers);
+			MessageChannel channel = jda.getTextChannelById(channelId);
+			if (channel == null)
+				return handleError("Channel " + channelId + " can't be found", handlers);
 
-		MessageChannel channel = DiscordChat.BOT_INSTANCE.jda.getTextChannelById(channelId);
-		if (channel == null)
-			return handleError("Channel " + channelId + " can't be found", handlers);
-
-		channel.sendMessage(msg).submit();
-		return 0;
+			channel.sendMessage(msg).submit();
+			return 0;
+		}).orElseGet(() -> handleError("Can not send message to discord: jda not initialized", handlers));
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {
