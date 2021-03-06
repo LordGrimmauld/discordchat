@@ -4,7 +4,7 @@ loaderVersion="[31,)"
 
 [[mods]]
     modId="discordchat"
-    version="${file.jarVersion}"
+    version="0.0.3"
     displayName="Dicord Chat"
     #updateJSONURL=""
     authors="Grimmauld"
