@@ -6,23 +6,22 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import mod.grimmauld.discordchat.Config;
 import net.minecraft.util.LazyValue;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 @SuppressWarnings("unused")
 public class AllDiscordCommands {
-	public static final Command TPS_COMMAND = new TpsCommand();
-	public static final Command WHITELIST_COMMAND = new WhitelistCommand();
-	public static final Command RUN_COMMAND = new RunCommand();
-	public static final Command LIST_COMMAND = new ListCommand();
-	public static final Command IP_COMMAND = new IPCommand();
-	public static final Command ENTITY_LIST_COMMAND = new EntityListCommand();
-	private static final Set<Command> commands = new HashSet<>();
-	private static final CommandClientBuilder builder = new CommandClientBuilder();
+	private static final HashSet<Command> commands;
+	private static final CommandClientBuilder builder;
 	private static LazyValue<CommandClient> client;
 
 	static {
+		commands = new HashSet<>();
+		builder = new CommandClientBuilder();
 		builder.setOwnerId("533668542562828311");
+
+		commands.addAll(Arrays.asList(new TpsCommand(), new WhitelistCommand(), new RunCommand(), new ListCommand(), new IPCommand(), new EntityListCommand()));
+
 		restartCommandClient();
 	}
 
