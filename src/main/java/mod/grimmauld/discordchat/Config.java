@@ -29,17 +29,17 @@ public class Config {
 		COMMON_CONFIG = commonBuilder.build();
 	}
 
+	private Config() {
+	}
+
 	public static void loadConfig(ForgeConfigSpec spec, Path path) {
 		final CommentedFileConfig configData = CommentedFileConfig.builder(path).sync().autosave().writingMode(WritingMode.REPLACE).build();
 		configData.load();
 		spec.setConfig(configData);
-		DiscordChat.relaunchBot();
+		DiscordChat.BOT_INSTANCE.relaunchBot();
 	}
 
 	public static void onConfigReloadLoad(ModConfig.Reloading event) {
-		DiscordChat.relaunchBot();
-	}
-
-	private Config() {
+		DiscordChat.BOT_INSTANCE.relaunchBot();
 	}
 }

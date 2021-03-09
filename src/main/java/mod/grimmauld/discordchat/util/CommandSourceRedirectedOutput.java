@@ -18,9 +18,14 @@ import java.util.function.Consumer;
 @ParametersAreNonnullByDefault
 public class CommandSourceRedirectedOutput extends CommandSource {
 	private final Consumer<ITextComponent> feedbackHook;
+
 	protected CommandSourceRedirectedOutput(Consumer<ITextComponent> feedbackHook, ICommandSource sourceIn, Vec3d posIn, Vec2f rotationIn, ServerWorld worldIn, int permissionLevelIn, String nameIn, ITextComponent displayNameIn, MinecraftServer serverIn, @Nullable Entity entityIn, boolean feedbackDisabledIn, ResultConsumer<CommandSource> resultConsumerIn, EntityAnchorArgument.Type entityAnchorTypeIn) {
-		super(sourceIn, posIn, rotationIn, worldIn, permissionLevelIn, nameIn, displayNameIn, serverIn, entityIn,feedbackDisabledIn, resultConsumerIn, entityAnchorTypeIn);
+		super(sourceIn, posIn, rotationIn, worldIn, permissionLevelIn, nameIn, displayNameIn, serverIn, entityIn, feedbackDisabledIn, resultConsumerIn, entityAnchorTypeIn);
 		this.feedbackHook = feedbackHook;
+	}
+
+	public static CommandSourceRedirectedOutput of(CommandSource from, Consumer<ITextComponent> feedbackHook) {
+		return from instanceof CommandSourceRedirectedOutput ? (CommandSourceRedirectedOutput) from : new CommandSourceRedirectedOutput(feedbackHook, from.source, from.getPos(), from.getRotation(), from.getWorld(), from.permissionLevel, from.getName(), from.getDisplayName(), from.getServer(), from.getEntity(), from.feedbackDisabled, from.resultConsumer, from.getEntityAnchorType());
 	}
 
 	@Override
@@ -33,9 +38,5 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 	public void sendErrorMessage(ITextComponent message) {
 		feedbackHook.accept(message);
 		super.sendErrorMessage(message);
-	}
-
-	public static CommandSourceRedirectedOutput of(CommandSource from, Consumer<ITextComponent> feedbackHook) {
-		return from instanceof CommandSourceRedirectedOutput ? (CommandSourceRedirectedOutput) from : new CommandSourceRedirectedOutput(feedbackHook, from.source, from.getPos(), from.getRotation(), from.getWorld(), from.permissionLevel, from.getName(), from.getDisplayName(), from.getServer(), from.getEntity(), from.feedbackDisabled, from.resultConsumer, from.getEntityAnchorType());
 	}
 }

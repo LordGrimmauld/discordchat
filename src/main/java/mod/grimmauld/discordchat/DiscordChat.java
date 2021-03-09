@@ -1,7 +1,7 @@
 package mod.grimmauld.discordchat;
 
-import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
 import mod.grimmauld.discordchat.util.DiscordBotContainer;
+import mod.grimmauld.discordchat.util.LazyOptionalContainer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -17,9 +17,9 @@ public class DiscordChat {
 	public static final String MODID = "discordchat";
 	public static final String VERSION = "0.0.3";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
-	private static final EventListener listener = new EventListener();
 	public static final DiscordBotContainer BOT_INSTANCE = new DiscordBotContainer();
-	public static MinecraftServer SERVER_INSTANCE = null;
+	public static final LazyOptionalContainer<MinecraftServer> SERVER_INSTANCE = new LazyOptionalContainer<>();
+	private static final EventListener listener = new EventListener();
 
 	public DiscordChat() {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
@@ -28,12 +28,5 @@ public class DiscordChat {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(EventListener::onServerStarted);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(EventListener::onServerStarted);
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
-	}
-
-	public static int relaunchBot() {
-		BOT_INSTANCE.connectBot(DiscordBot::new);
-		AllDiscordCommands.restartCommandClient();
-		listener.resetSyncCycle();
-		return 1;
 	}
 }

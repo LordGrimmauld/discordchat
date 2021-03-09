@@ -1,6 +1,7 @@
 package mod.grimmauld.discordchat.util;
 
 import mod.grimmauld.discordchat.DiscordChat;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.LazyValue;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,10 +13,13 @@ public class IPUtil {
 
 	private static final LazyValue<String> IP = new LazyValue<>(IPUtil::loadIp);
 
+	private IPUtil() {
+	}
+
 	@Nullable
 	public static String getIP() {
 		String ip = IP.getValue();
-		int port = DiscordChat.SERVER_INSTANCE == null ? -1 : DiscordChat.SERVER_INSTANCE.getServerPort();
+		int port = DiscordChat.SERVER_INSTANCE.runIfPresent(MinecraftServer::getServerPort).orElse(-1);
 		if (ip == null)
 			return null;
 		return IP.getValue() + ":" + port;
@@ -31,8 +35,5 @@ public class IPUtil {
 			DiscordChat.LOGGER.error("Can't query IP address: ", e);
 			return null;
 		}
-	}
-
-	private IPUtil() {
 	}
 }

@@ -21,25 +21,28 @@ public class EntityListCommand extends GrimmCommand {
 
 	@Override
 	protected void executeChecked(CommandEvent event) {
-		if (!DiscordBot.isOp(event.getMember())) {
-			sendResponse(event, "You need operator role to run this command!");
-			return;
-		}
+		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+			if (!DiscordBot.isOp(event.getMember())) {
+				sendResponse(event, "You need operator role to run this command!");
+				return false;
+			}
 
-		EntityType<?> type = ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryCreate(event.getMessage().getContentStripped().replaceFirst("([^ ])* ", "")));
-		if (type == null) {
-			sendResponse(event, "Entity type could not be found!");
-			return;
-		}
+			EntityType<?> type = ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryCreate(event.getMessage().getContentStripped().replaceFirst("([^ ])* ", "")));
+			if (type == null) {
+				sendResponse(event, "Entity type could not be found!");
+				return false;
+			}
 
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setTitle("Entities");
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Entities");
 
-		DiscordChat.SERVER_INSTANCE.getWorlds().forEach(world -> {
-			StringBuilder builder = new StringBuilder();
-			world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getPosX()).append(" ").append((int) entity.getPosY()).append(" ").append((int) entity.getPosZ()).append("\n"));
-			eb.addField("Entities in " + world.getDimension().getType().getRegistryName(), builder.toString(), true);
-		});
-		event.getChannel().sendMessage(eb.build()).submit();
+			server.getWorlds().forEach(world -> {
+				StringBuilder builder = new StringBuilder();
+				world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getPosX()).append(" ").append((int) entity.getPosY()).append(" ").append((int) entity.getPosZ()).append("\n"));
+				eb.addField("Entities in " + world.getDimension().getType().getRegistryName(), builder.toString(), true);
+			});
+			event.getChannel().sendMessage(eb.build()).submit();
+			return true;
+		}).orElseGet(() -> sendNoServerResponse(event));
 	}
 }

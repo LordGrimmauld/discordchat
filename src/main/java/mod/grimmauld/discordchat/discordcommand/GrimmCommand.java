@@ -4,24 +4,21 @@ import com.jagrosh.jdautilities.command.Command;
 import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.Config;
-import mod.grimmauld.discordchat.DiscordChat;
 
 
 @Author("Grimmauld")
 public abstract class GrimmCommand extends Command {
-	private final boolean needsServer;
 	private final boolean global;
 
 
-	protected GrimmCommand(String name, boolean needsServer, boolean global) {
+	protected GrimmCommand(String name, boolean global) {
 		this.name = name;
-		this.needsServer = needsServer;
 		this.global = global;
 		AllDiscordCommands.register(this);
 	}
 
 	protected GrimmCommand(String name) {
-		this(name, true, false);
+		this(name, false);
 	}
 
 	@Override
@@ -29,10 +26,6 @@ public abstract class GrimmCommand extends Command {
 		if (!(global || event.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get())))
 			return;
 
-		if (needsServer && DiscordChat.SERVER_INSTANCE == null) {
-			event.getChannel().sendMessage("Failed to communicate with server").submit();
-			return;
-		}
 		executeChecked(event);
 	}
 
@@ -47,5 +40,10 @@ public abstract class GrimmCommand extends Command {
 			msg = msg.substring(1990);
 		}
 		event.getChannel().sendMessage(msg).submit();
+	}
+
+	protected boolean sendNoServerResponse(CommandEvent event) {
+		event.getChannel().sendMessage("Failed to communicate with server").submit();
+		return false;
 	}
 }

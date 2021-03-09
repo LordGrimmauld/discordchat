@@ -19,10 +19,10 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 
 @SuppressWarnings("unused")
 public class EventListener {
-	private int tickSyncCycle = Config.SYNC_RATE.get();
+	static int tickSyncCycle = Config.SYNC_RATE.get();
 
 	public static void onServerStarted(FMLServerStartedEvent event) {
-		DiscordChat.relaunchBot();
+		DiscordChat.BOT_INSTANCE.relaunchBot();
 	}
 
 	public static void onServerStopped(FMLServerStoppedEvent event) {
@@ -31,9 +31,14 @@ public class EventListener {
 		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
 	}
 
+	public static void resetSyncCycle() {
+		int syncRate = Config.SYNC_RATE.get();
+		tickSyncCycle = syncRate > 0 ? syncRate : -1;
+	}
+
 	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
-		DiscordChat.SERVER_INSTANCE = event.getServer();
+		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
 		AllCommands.register(event.getCommandDispatcher());
 	}
 
@@ -49,11 +54,6 @@ public class EventListener {
 			resetSyncCycle();
 			DiscordMessageQueue.INSTANCE.send();
 		}
-	}
-
-	public void resetSyncCycle() {
-		int syncRate = Config.SYNC_RATE.get();
-		tickSyncCycle = syncRate > 0 ? syncRate : -1;
 	}
 
 	@SubscribeEvent

@@ -30,21 +30,24 @@ public class TpsCommand extends GrimmCommand {
 
 	@Override
 	protected void executeChecked(CommandEvent event) {
-		double meanTickTime = mean(DiscordChat.SERVER_INSTANCE.tickTimeArray) * 1.0E-6D;
-		double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
-		double x = MathHelper.clamp((meanTPS - 5) / 15, 0, 1);
+		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+			double meanTickTime = mean(server.tickTimeArray) * 1.0E-6D;
+			double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
+			double x = MathHelper.clamp((meanTPS - 5) / 15, 0, 1);
 
-		EmbedBuilder eb = new EmbedBuilder();
-		eb.setTitle("Server TPS");
-		eb.setColor(new Color(Math.min(255, (int) (512d * (1 - x))), Math.min(255, (int) (512d * x)), 0));
+			EmbedBuilder eb = new EmbedBuilder();
+			eb.setTitle("Server TPS");
+			eb.setColor(new Color(Math.min(255, (int) (512d * (1 - x))), Math.min(255, (int) (512d * x)), 0));
 
-		for (DimensionType dim : DimensionType.getAll()) {
-			long[] times = DiscordChat.SERVER_INSTANCE.getTickTime(dim);
-			eb.addField("Mean tick time in " + dim.getRegistryName(), df.format(times == null ? 0 : mean(times) * 1.0E-6D) + "ms", true);
-		}
-		eb.addBlankField(false);
-		eb.addField("Mean tick time", df.format(meanTickTime) + "ms", true);
-		eb.addField("Mean TPS", df.format(meanTPS), true);
-		event.getChannel().sendMessage(eb.build()).submit();
+			for (DimensionType dim : DimensionType.getAll()) {
+				long[] times = server.getTickTime(dim);
+				eb.addField("Mean tick time in " + dim.getRegistryName(), df.format(times == null ? 0 : mean(times) * 1.0E-6D) + "ms", true);
+			}
+			eb.addBlankField(false);
+			eb.addField("Mean tick time", df.format(meanTickTime) + "ms", true);
+			eb.addField("Mean TPS", df.format(meanTPS), true);
+			event.getChannel().sendMessage(eb.build()).submit();
+			return true;
+		}).orElseGet(() -> sendNoServerResponse(event));
 	}
 }

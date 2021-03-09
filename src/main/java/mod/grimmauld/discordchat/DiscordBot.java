@@ -56,8 +56,8 @@ public class DiscordBot extends ListenerAdapter {
 			return;
 
 		if (!msg.getContentStripped().isEmpty())
-			DiscordChat.SERVER_INSTANCE.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] " + sanitize(msg.getContentStripped())).applyTextStyle(style -> style.setClickEvent(null)));
-		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] Uploaded a file: ").appendSibling(new StringTextComponent(sanitize(attachment.getUrl())).applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.UNDERLINE).applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl()))))));
+			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] " + sanitize(msg.getContentStripped())).applyTextStyle(style -> style.setClickEvent(null))));
+		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] Uploaded a file: ").appendSibling(new StringTextComponent(sanitize(attachment.getUrl())).applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.UNDERLINE).applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))))));
 	}
 
 	public void shutdown() {
@@ -78,8 +78,8 @@ public class DiscordBot extends ListenerAdapter {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		DiscordChat.SERVER_INSTANCE.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(DiscordChat.SERVER_INSTANCE.getCommandSource(),
-			text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]);
+		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(server.getCommandSource(),
+			text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]));
 
 		event.getChannel().sendMessage(builder.toString()).submit();
 	}
