@@ -6,8 +6,8 @@ import net.minecraft.command.ICommandSource;
 import net.minecraft.command.arguments.EntityAnchorArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public class CommandSourceRedirectedOutput extends CommandSource {
 	private final Consumer<ITextComponent> feedbackHook;
 
-	protected CommandSourceRedirectedOutput(Consumer<ITextComponent> feedbackHook, ICommandSource sourceIn, Vec3d posIn, Vec2f rotationIn, ServerWorld worldIn, int permissionLevelIn, String nameIn, ITextComponent displayNameIn, MinecraftServer serverIn, @Nullable Entity entityIn, boolean feedbackDisabledIn, ResultConsumer<CommandSource> resultConsumerIn, EntityAnchorArgument.Type entityAnchorTypeIn) {
+	protected CommandSourceRedirectedOutput(Consumer<ITextComponent> feedbackHook, ICommandSource sourceIn, Vector3d posIn, Vector2f rotationIn, ServerWorld worldIn, int permissionLevelIn, String nameIn, ITextComponent displayNameIn, MinecraftServer serverIn, @Nullable Entity entityIn, boolean feedbackDisabledIn, ResultConsumer<CommandSource> resultConsumerIn, EntityAnchorArgument.Type entityAnchorTypeIn) {
 		super(sourceIn, posIn, rotationIn, worldIn, permissionLevelIn, nameIn, displayNameIn, serverIn, entityIn, feedbackDisabledIn, resultConsumerIn, entityAnchorTypeIn);
 		this.feedbackHook = feedbackHook;
 	}

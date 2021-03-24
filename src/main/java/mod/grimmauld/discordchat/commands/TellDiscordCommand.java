@@ -16,6 +16,6 @@ public class TellDiscordCommand {
 		return Commands.literal("telldiscord")
 			.requires(player -> player.hasPermissionLevel(2))
 			.then(Commands.argument("message", ComponentArgument.component())
-				.executes(commandContext -> DiscordMessageQueue.INSTANCE.queue(TextComponentUtils.updateForEntity(commandContext.getSource(), ComponentArgument.getComponent(commandContext, "message"), commandContext.getSource().getEntity(), 0).getString(), s -> commandContext.getSource().sendErrorMessage(new StringTextComponent(s)))));
+				.executes(commandContext -> DiscordMessageQueue.INSTANCE.queue(TextComponentUtils.func_240645_a_(commandContext.getSource(), ComponentArgument.getComponent(commandContext, "message"), commandContext.getSource().getEntity(), 0).getString(), s -> commandContext.getSource().sendErrorMessage(new StringTextComponent(s)))));
 	}
 }

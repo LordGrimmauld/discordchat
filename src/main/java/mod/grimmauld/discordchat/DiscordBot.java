@@ -56,8 +56,30 @@ public class DiscordBot extends ListenerAdapter {
 			return;
 
 		if (!msg.getContentStripped().isEmpty())
-			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] " + sanitize(msg.getContentStripped())).applyTextStyle(style -> style.setClickEvent(null))));
-		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getPlayerList().sendMessage(new StringTextComponent("[" + TextFormatting.GOLD + "D " + TextFormatting.AQUA + sanitize(msg.getAuthor().getName()) + TextFormatting.WHITE + "] Uploaded a file: ").appendSibling(new StringTextComponent(sanitize(attachment.getUrl())).applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.UNDERLINE).applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))))));
+			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
+				.getPlayerList()
+				.getPlayers()
+				.forEach(player -> player.sendMessage(
+					new StringTextComponent(
+						"[" + TextFormatting.GOLD + "D "
+						+ TextFormatting.AQUA
+						+ sanitize(msg.getAuthor().getName())
+						+ TextFormatting.WHITE + "] "
+						+ sanitize(msg.getContentStripped()))
+						.modifyStyle(style -> style.setClickEvent(null)), player.getUniqueID())));
+		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
+			.getPlayerList()
+			.getPlayers()
+			.forEach(player -> player.sendMessage(
+				new StringTextComponent(
+					"[" + TextFormatting.GOLD + "D "
+						+ TextFormatting.AQUA
+						+ sanitize(msg.getAuthor().getName())
+						+ TextFormatting.WHITE + "] Uploaded a file: ")
+					.appendSibling(new StringTextComponent(sanitize(attachment.getUrl()))
+						.modifyStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
+						.mergeStyle(TextFormatting.BLUE)
+						.mergeStyle(TextFormatting.UNDERLINE)), player.getUniqueID()))));
 	}
 
 	public void shutdown() {
@@ -68,7 +90,7 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 		String content = event.retrieveMessage().complete().getContentRaw();
-		if (!content.startsWith(Config.PREFIX.get() + WhitelistCommand.NAME) || !event.getReactionEmote().getName().equals("\u2705") || !isOp(event.getMember()) || DiscordChat.SERVER_INSTANCE == null)
+		if (!content.startsWith(Config.PREFIX.get() + WhitelistCommand.NAME) || !event.getReactionEmote().getName().equals("\u2705") || !isOp(event.getMember()))
 			return;
 		String[] playerName = content.split(" ");
 

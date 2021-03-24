@@ -4,8 +4,9 @@ import com.jagrosh.jdautilities.command.CommandEvent;
 import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.World;
 
 import java.awt.*;
 import java.text.DecimalFormat;
@@ -39,7 +40,9 @@ public class TpsCommand extends GrimmCommand {
 			eb.setTitle("Server TPS");
 			eb.setColor(new Color(Math.min(255, (int) (512d * (1 - x))), Math.min(255, (int) (512d * x)), 0));
 
-			for (DimensionType dim : DimensionType.getAll()) {
+
+
+			for (RegistryKey<World> dim : server.func_240770_D_()) {
 				long[] times = server.getTickTime(dim);
 				eb.addField("Mean tick time in " + dim.getRegistryName(), df.format(times == null ? 0 : mean(times) * 1.0E-6D) + "ms", true);
 			}

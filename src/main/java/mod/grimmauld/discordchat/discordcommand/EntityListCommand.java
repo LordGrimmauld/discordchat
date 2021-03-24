@@ -39,7 +39,7 @@ public class EntityListCommand extends GrimmCommand {
 			server.getWorlds().forEach(world -> {
 				StringBuilder builder = new StringBuilder();
 				world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getPosX()).append(" ").append((int) entity.getPosY()).append(" ").append((int) entity.getPosZ()).append("\n"));
-				eb.addField("Entities in " + world.getDimension().getType().getRegistryName(), builder.toString(), true);
+				eb.addField("Entities in " + world.getDimensionKey().getLocation(), builder.toString(), true);
 			});
 			event.getChannel().sendMessage(eb.build()).submit();
 			return true;

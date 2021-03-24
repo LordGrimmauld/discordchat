@@ -21,6 +21,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 public class EventListener {
 	static int tickSyncCycle = Config.SYNC_RATE.get();
 
+	@SubscribeEvent
 	public static void onServerStarted(FMLServerStartedEvent event) {
 		DiscordChat.BOT_INSTANCE.relaunchBot();
 	}
@@ -39,7 +40,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
-		AllCommands.register(event.getCommandDispatcher());
+		AllCommands.register(event.getServer().getCommandManager().getDispatcher());
 	}
 
 	@SubscribeEvent
