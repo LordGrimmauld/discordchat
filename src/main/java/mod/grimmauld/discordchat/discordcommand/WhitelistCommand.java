@@ -8,7 +8,7 @@ public class WhitelistCommand extends GrimmCommand {
 	public static final String NAME = "whitelist";
 
 	public WhitelistCommand() {
-		super(NAME, true);
+		super(NAME);
 		help = "Opens a whitelist request to operators. Operators can accept by checkmark.";
 	}
 

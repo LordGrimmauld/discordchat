@@ -45,7 +45,7 @@ public class DiscordBot extends ListenerAdapter {
 	}
 
 	public static boolean isOp(Member member) {
-		return !member.getUser().isBot() && member.getRoles().stream().anyMatch(role -> role.getName().equals(Config.OP_ROLE_NAME.get()));
+		return !member.getUser().isBot() && member.getRoles().stream().anyMatch(role -> role.getName().equals(Config.OP_ROLE_NAME.get())) || member.isOwner();
 	}
 
 	@Override

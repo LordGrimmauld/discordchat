@@ -20,7 +20,14 @@ public class AllDiscordCommands {
 		builder = new CommandClientBuilder();
 		builder.setOwnerId("533668542562828311");
 
-		commands.addAll(Arrays.asList(new TpsCommand(), new WhitelistCommand(), new RunCommand(), new ListCommand(), new IPCommand(), new EntityListCommand()));
+		commands.addAll(Arrays.asList(
+			new TpsCommand(),
+			new WhitelistCommand(),
+			new RunCommand(),
+			new ListCommand(),
+			new IPCommand(),
+			new EntityListCommand(),
+			new LatestCommand()));
 
 		restartCommandClient();
 	}
