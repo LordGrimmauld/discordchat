@@ -27,7 +27,8 @@ public class AllDiscordCommands {
 			new ListCommand(),
 			new IPCommand(),
 			new EntityListCommand(),
-			new LatestCommand()));
+			new LatestCommand(),
+			new CrashCommand()));
 
 		restartCommandClient();
 	}
