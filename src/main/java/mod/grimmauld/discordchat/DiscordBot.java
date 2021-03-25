@@ -100,8 +100,9 @@ public class DiscordBot extends ListenerAdapter {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(server.getCommandSource(),
-			text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]));
+		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(server.getCommandSource())
+			.withName(event.getMember().getUser().getName())
+			.withHook(text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]));
 
 		event.getChannel().sendMessage(builder.toString()).submit();
 	}

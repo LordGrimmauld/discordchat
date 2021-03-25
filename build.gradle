@@ -93,7 +93,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     def jda = "net.dv8tion:JDA:$jda_version"
-    def jdautils = "com.jagrosh:jda-utilities:3.0.1"
+    def jdautils = "com.jagrosh:jda-utilities:3.0.5"
 
     implementation jda
     implementation jdautils
