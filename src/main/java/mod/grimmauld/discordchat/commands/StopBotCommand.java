@@ -11,7 +11,7 @@ public class StopBotCommand {
 
 	public static ArgumentBuilder<CommandSource, ?> register() {
 		return Commands.literal("stopBot")
-			.requires(cs -> cs.hasPermissionLevel(2))
+			.requires(cs -> cs.hasPermission(2))
 			.executes(ctx -> {
 				DiscordChat.BOT_INSTANCE.invalidate();
 				return 1;

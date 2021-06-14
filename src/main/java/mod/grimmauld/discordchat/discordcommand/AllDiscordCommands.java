@@ -42,7 +42,7 @@ public class AllDiscordCommands {
 	}
 
 	public static CommandClient getCommandClient() {
-		return client.getValue();
+		return client.get();
 	}
 
 	public static void restartCommandClient() {

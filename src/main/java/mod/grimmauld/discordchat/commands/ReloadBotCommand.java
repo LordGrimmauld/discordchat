@@ -12,7 +12,7 @@ public class ReloadBotCommand {
 
 	public static ArgumentBuilder<CommandSource, ?> register() {
 		return Commands.literal("reloadBot")
-			.requires(cs -> cs.hasPermissionLevel(2))
+			.requires(cs -> cs.hasPermission(2))
 			.executes(ctx -> DiscordChat.BOT_INSTANCE.relaunchBot());
 	}
 }

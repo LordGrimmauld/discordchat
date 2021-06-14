@@ -27,7 +27,7 @@ public class EntityListCommand extends GrimmCommand {
 				return false;
 			}
 
-			EntityType<?> type = ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryCreate(event.getMessage().getContentStripped().replaceFirst("([^ ])* ", "")));
+			EntityType<?> type = ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryParse(event.getMessage().getContentStripped().replaceFirst("([^ ])* ", "")));
 			if (type == null) {
 				sendResponse(event, "Entity type could not be found!");
 				return false;
@@ -36,10 +36,10 @@ public class EntityListCommand extends GrimmCommand {
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("Entities");
 
-			server.getWorlds().forEach(world -> {
+			server.getAllLevels().forEach(world -> {
 				StringBuilder builder = new StringBuilder();
-				world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getPosX()).append(" ").append((int) entity.getPosY()).append(" ").append((int) entity.getPosZ()).append("\n"));
-				eb.addField("Entities in " + world.getDimensionKey().getLocation(), builder.toString(), true);
+				world.getEntities(type, entity -> true).forEach(entity -> builder.append(entity.getName().getString()).append(" at ").append((int) entity.getX()).append(" ").append((int) entity.getY()).append(" ").append((int) entity.getZ()).append("\n"));
+				eb.addField("Entities in " + world.dimension().location(), builder.toString(), true);
 			});
 			event.getChannel().sendMessage(eb.build()).submit();
 			return true;

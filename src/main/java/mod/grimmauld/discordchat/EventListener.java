@@ -21,26 +21,27 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 public class EventListener {
 	static int tickSyncCycle = Config.SYNC_RATE.get();
 
-	@SubscribeEvent
-	public static void onServerStarted(FMLServerStartedEvent event) {
-		DiscordChat.BOT_INSTANCE.relaunchBot();
-	}
-
-	public static void onServerStopped(FMLServerStoppedEvent event) {
-		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
-		DiscordMessageQueue.INSTANCE.send();
-		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
-	}
-
 	public static void resetSyncCycle() {
 		int syncRate = Config.SYNC_RATE.get();
 		tickSyncCycle = syncRate > 0 ? syncRate : -1;
 	}
 
 	@SubscribeEvent
+	public void onServerStarted(FMLServerStartedEvent event) {
+		DiscordChat.BOT_INSTANCE.relaunchBot();
+	}
+
+	@SubscribeEvent
+	public void onServerStopped(FMLServerStoppedEvent event) {
+		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
+		DiscordMessageQueue.INSTANCE.send();
+		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
+	}
+
+	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
-		AllCommands.register(event.getServer().getCommandManager().getDispatcher());
+		AllCommands.register(event.getServer().getCommands().getDispatcher());
 	}
 
 	@SubscribeEvent
@@ -69,7 +70,7 @@ public class EventListener {
 
 	@SubscribeEvent
 	public void playerDieEvent(LivingDeathEvent event) {
-		if (!(event.getEntity() instanceof ServerPlayerEntity) || !event.getEntity().world.getGameRules().getBoolean(GameRules.SHOW_DEATH_MESSAGES))
+		if (!(event.getEntity() instanceof ServerPlayerEntity) || !event.getEntity().level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES))
 			return;
 		DiscordMessageQueue.INSTANCE.queue(((ServerPlayerEntity) event.getEntity()).getCombatTracker().getDeathMessage().getString(), DiscordChat.LOGGER::warn);
 	}
@@ -77,8 +78,8 @@ public class EventListener {
 	@SubscribeEvent
 	public void advancementEvent(AdvancementEvent event) {
 		Advancement advancement = event.getAdvancement();
-		if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceToChat() && event.getPlayer().world.getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)) {
-			DiscordMessageQueue.INSTANCE.queue(new TranslationTextComponent("chat.type.advancement." + advancement.getDisplay().getFrame().getName(), event.getPlayer().getDisplayName(), advancement.getDisplayText()).getString().replace("[", "**[").replace("]", "]**"), DiscordChat.LOGGER::warn);
+		if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceChat() && event.getPlayer().level.getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
+			DiscordMessageQueue.INSTANCE.queue(new TranslationTextComponent("chat.type.advancement." + advancement.getDisplay().getFrame().getName(), event.getPlayer().getDisplayName(), advancement.getChatComponent()).getString().replace("[", "**[").replace("]", "]**"), DiscordChat.LOGGER::warn);
 		}
 	}
 }

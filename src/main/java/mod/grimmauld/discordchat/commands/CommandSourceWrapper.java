@@ -19,9 +19,9 @@ public class CommandSourceWrapper implements ICommandSource {
 
 	private CommandSourceWrapper(ICommandSource commandSource) {
 		this.commandSource = commandSource;
-		shouldReceiveFeedback = commandSource::shouldReceiveFeedback;
-		shouldReceiveErrors = commandSource::shouldReceiveErrors;
-		allowLogging = commandSource::allowLogging;
+		shouldReceiveFeedback = commandSource::acceptsSuccess;
+		shouldReceiveErrors = commandSource::acceptsFailure;
+		allowLogging = commandSource::shouldInformAdmins;
 	}
 
 	public static CommandSourceWrapper of(ICommandSource source) {
@@ -34,17 +34,17 @@ public class CommandSourceWrapper implements ICommandSource {
 	}
 
 	@Override
-	public boolean shouldReceiveFeedback() {
+	public boolean acceptsSuccess() {
 		return shouldReceiveFeedback.get();
 	}
 
 	@Override
-	public boolean shouldReceiveErrors() {
+	public boolean acceptsFailure() {
 		return shouldReceiveErrors.get();
 	}
 
 	@Override
-	public boolean allowLogging() {
+	public boolean shouldInformAdmins() {
 		return allowLogging.get();
 	}
 

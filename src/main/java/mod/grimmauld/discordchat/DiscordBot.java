@@ -66,7 +66,7 @@ public class DiscordBot extends ListenerAdapter {
 						+ sanitize(msg.getAuthor().getName())
 						+ TextFormatting.WHITE + "] "
 						+ sanitize(msg.getContentStripped()))
-						.modifyStyle(style -> style.setClickEvent(null)), player.getUniqueID())));
+						.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
 		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 			.getPlayerList()
 			.getPlayers()
@@ -76,10 +76,10 @@ public class DiscordBot extends ListenerAdapter {
 						+ TextFormatting.AQUA
 						+ sanitize(msg.getAuthor().getName())
 						+ TextFormatting.WHITE + "] Uploaded a file: ")
-					.appendSibling(new StringTextComponent(sanitize(attachment.getUrl()))
-						.modifyStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
-						.mergeStyle(TextFormatting.BLUE)
-						.mergeStyle(TextFormatting.UNDERLINE)), player.getUniqueID()))));
+					.append(new StringTextComponent(sanitize(attachment.getUrl()))
+						.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
+						.withStyle(TextFormatting.BLUE)
+						.withStyle(TextFormatting.UNDERLINE)), player.getUUID()))));
 	}
 
 	public void shutdown() {
@@ -100,7 +100,7 @@ public class DiscordBot extends ListenerAdapter {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommandManager().handleCommand(CommandSourceRedirectedOutput.of(server.getCommandSource())
+		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack())
 			.withName(event.getMember().getUser().getName())
 			.withHook(text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]));
 
@@ -111,7 +111,7 @@ public class DiscordBot extends ListenerAdapter {
 		s = org.apache.commons.lang3.StringUtils.normalizeSpace(s);
 
 		for (int i = 0; i < s.length(); ++i) {
-			if (!SharedConstants.isAllowedCharacter(s.charAt(i))) {
+			if (!SharedConstants.isAllowedChatCharacter(s.charAt(i))) {
 				return "ILLEGAL";
 			}
 		}

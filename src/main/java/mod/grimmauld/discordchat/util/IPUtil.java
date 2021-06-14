@@ -18,11 +18,11 @@ public class IPUtil {
 
 	@Nullable
 	public static String getIP() {
-		String ip = IP.getValue();
-		int port = DiscordChat.SERVER_INSTANCE.runIfPresent(MinecraftServer::getServerPort).orElse(-1);
+		String ip = IP.get();
+		int port = DiscordChat.SERVER_INSTANCE.runIfPresent(MinecraftServer::getPort).orElse(-1);
 		if (ip == null)
 			return null;
-		return IP.getValue() + ":" + port;
+		return IP.get() + ":" + port;
 	}
 
 	@Nullable

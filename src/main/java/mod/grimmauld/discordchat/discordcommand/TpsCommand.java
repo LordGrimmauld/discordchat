@@ -32,7 +32,7 @@ public class TpsCommand extends GrimmCommand {
 	@Override
 	protected void executeChecked(CommandEvent event) {
 		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
-			double meanTickTime = mean(server.tickTimeArray) * 1.0E-6D;
+			double meanTickTime = mean(server.tickTimes) * 1.0E-6D;
 			double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
 			double x = MathHelper.clamp((meanTPS - 5) / 15, 0, 1);
 
@@ -42,7 +42,7 @@ public class TpsCommand extends GrimmCommand {
 
 
 
-			for (RegistryKey<World> dim : server.func_240770_D_()) {
+			for (RegistryKey<World> dim : server.levelKeys()) {
 				long[] times = server.getTickTime(dim);
 				eb.addField("Mean tick time in " + dim.getRegistryName(), df.format(times == null ? 0 : mean(times) * 1.0E-6D) + "ms", true);
 			}

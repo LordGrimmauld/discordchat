@@ -32,60 +32,60 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 	public static CommandSourceRedirectedOutput of(CommandSource from) {
 		return new CommandSourceRedirectedOutput(text -> {},
 			from.source,
-			from.getPos(),
+			from.getPosition(),
 			from.getRotation(),
-			from.getWorld(),
+			from.getLevel(),
 			from.permissionLevel,
-			from.getName(),
+			from.getTextName(),
 			from.getDisplayName(),
 			from.getServer(),
 			from.getEntity(),
-			from.feedbackDisabled,
-			from.resultConsumer,
-			from.getEntityAnchorType());
+			from.silent,
+			from.consumer,
+			from.getAnchor());
 	}
 
 	public CommandSourceRedirectedOutput withHook(Consumer<ITextComponent> feedbackHook) {
 		return new CommandSourceRedirectedOutput(feedbackHook,
 			this.source,
-			this.getPos(),
+			this.getPosition(),
 			this.getRotation(),
-			this.getWorld(),
+			this.getLevel(),
 			this.permissionLevel,
-			this.getName(),
+			this.getTextName(),
 			this.getDisplayName(),
 			this.getServer(),
 			this.getEntity(),
-			this.feedbackDisabled,
-			this.resultConsumer,
-			this.getEntityAnchorType());
+			this.silent,
+			this.consumer,
+			this.getAnchor());
 	}
 
 	public CommandSourceRedirectedOutput withName(String name) {
 		return new CommandSourceRedirectedOutput(this.feedbackHook,
 			this.source,
-			this.getPos(),
+			this.getPosition(),
 			this.getRotation(),
-			this.getWorld(),
+			this.getLevel(),
 			this.permissionLevel,
 			name,
 			new StringTextComponent(name),
 			this.getServer(),
 			this.getEntity(),
-			this.feedbackDisabled,
-			this.resultConsumer,
-			this.getEntityAnchorType());
+			this.silent,
+			this.consumer,
+			this.getAnchor());
 	}
 
 	@Override
-	public void sendFeedback(ITextComponent message, boolean allowLogging) {
+	public void sendSuccess(ITextComponent message, boolean allowLogging) {
 		feedbackHook.accept(message);
-		super.sendFeedback(message, allowLogging);
+		super.sendSuccess(message, allowLogging);
 	}
 
 	@Override
-	public void sendErrorMessage(ITextComponent message) {
+	public void sendFailure(ITextComponent message) {
 		feedbackHook.accept(message);
-		super.sendErrorMessage(message);
+		super.sendFailure(message);
 	}
 }
