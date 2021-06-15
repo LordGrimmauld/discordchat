@@ -34,6 +34,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void onServerStarted(FMLServerStartedEvent event) {
 		DiscordChat.BOT_INSTANCE.relaunchBot();
+		DiscordMessageQueue.INSTANCE.queue("Server started", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
