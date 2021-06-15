@@ -29,7 +29,7 @@ public class EntityListCommand extends GrimmSlashCommand {
 			}
 
 			String et = event.getOptions().stream().filter(optionMapping -> optionMapping.getName().equals("ign") &&
-				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("").replaceFirst("([^ ])* ", "");
+				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("");
 
 			EntityType<?> type = ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryParse(et));
 			if (type == null) {

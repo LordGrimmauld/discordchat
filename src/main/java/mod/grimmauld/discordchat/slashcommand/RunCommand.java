@@ -22,9 +22,10 @@ public class RunCommand extends GrimmSlashCommand {
 		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
 			StringBuilder builder = new StringBuilder();
 			String cmd = event.getOptions().stream().filter(optionMapping -> optionMapping.getName().equals("cmd") &&
-				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("").replaceFirst("([^ ])* ", "");
+				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("");
 
-			server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack().withPermission(DiscordBot.isOp(event.getMember()) ? 2 : 0))
+			server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack()
+				.withPermission(DiscordBot.isOp(event.getMember()) ? 2 : 0))
 				.withName(event.getMember().getUser().getName())
 				.withHook(text -> builder.append(text.getString()).append("\n")), cmd);
 			sendResponse(event, builder.toString(), true);
