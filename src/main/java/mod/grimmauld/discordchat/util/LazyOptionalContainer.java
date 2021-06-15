@@ -49,9 +49,4 @@ public class LazyOptionalContainer<T> {
 		this.object = object;
 		this.supplier = null;
 	}
-
-	public boolean isPresent() {
-		return ifPresent(object -> {
-		});
-	}
 }

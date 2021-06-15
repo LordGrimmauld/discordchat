@@ -3,6 +3,7 @@ package mod.grimmauld.discordchat;
 import mod.grimmauld.discordchat.util.DiscordBotContainer;
 import mod.grimmauld.discordchat.util.LazyOptionalContainer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -25,8 +26,10 @@ public class DiscordChat {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 		MinecraftForge.EVENT_BUS.register(listener);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(Config::onConfigReloadLoad);
-		// FMLJavaModLoadingContext.get().getModEventBus().addListener(EventListener::onServerStarted);
-		// FMLJavaModLoadingContext.get().getModEventBus().addListener(EventListener::onServerStarted);
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
+	}
+
+	public static ResourceLocation asId(String path) {
+		return new ResourceLocation(MODID, path);
 	}
 }

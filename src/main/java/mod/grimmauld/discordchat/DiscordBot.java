@@ -1,12 +1,14 @@
 package mod.grimmauld.discordchat;
 
-import mod.grimmauld.discordchat.discordcommand.AllDiscordCommands;
-import mod.grimmauld.discordchat.discordcommand.WhitelistCommand;
+import mod.grimmauld.discordchat.slashcommand.CommandRegistry;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -17,6 +19,11 @@ import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+@ParametersAreNonnullByDefault
 public class DiscordBot extends ListenerAdapter {
 	@Nullable
 	public final JDA jda;
@@ -31,7 +38,6 @@ public class DiscordBot extends ListenerAdapter {
 
 
 			tmpJDA = JDABuilder.createDefault(token)
-				.addEventListeners(AllDiscordCommands.getCommandClient())
 				.addEventListeners(this)
 				.build();
 			DiscordChat.LOGGER.debug("launched discord bot");
@@ -42,17 +48,33 @@ public class DiscordBot extends ListenerAdapter {
 			tmpJDA = null;
 		}
 		jda = tmpJDA;
+
+		if (jda != null) {
+			try {
+				jda.awaitReady();
+				getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
+			} catch (InterruptedException e) {
+				DiscordChat.LOGGER.error("Something went wrong initializing slash commands: {}", e);
+			}
+		}
 	}
 
-	public static boolean isOp(Member member) {
-		return !member.getUser().isBot() && member.getRoles().stream().anyMatch(role -> role.getName().equals(Config.OP_ROLE_NAME.get())) || member.isOwner();
+	public static boolean isOp(@Nullable Member member) {
+		return member != null && (!member.getUser().isBot() && member.getRoles().stream().anyMatch(role -> role.getName().equals(Config.OP_ROLE_NAME.get())));
+	}
+
+	@Override
+	public void onSlashCommand(SlashCommandEvent event) {
+		StreamSupport.stream(CommandRegistry.COMMAND_REGISTRY.get().spliterator(), false)
+			.filter(grimmSlashCommand -> grimmSlashCommand.getName().equals(event.getName()))
+			.forEach(grimmSlashCommand -> grimmSlashCommand.execute(event));
 	}
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message msg = event.getMessage();
 
-		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot() || DiscordChat.SERVER_INSTANCE == null)
+		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot())
 			return;
 
 		if (!msg.getContentStripped().isEmpty())
@@ -62,10 +84,10 @@ public class DiscordBot extends ListenerAdapter {
 				.forEach(player -> player.sendMessage(
 					new StringTextComponent(
 						"[" + TextFormatting.GOLD + "D "
-						+ TextFormatting.AQUA
-						+ sanitize(msg.getAuthor().getName())
-						+ TextFormatting.WHITE + "] "
-						+ sanitize(msg.getContentStripped()))
+							+ TextFormatting.AQUA
+							+ sanitize(msg.getAuthor().getName())
+							+ TextFormatting.WHITE + "] "
+							+ sanitize(msg.getContentStripped()))
 						.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
 		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 			.getPlayerList()
@@ -90,7 +112,7 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 		String content = event.retrieveMessage().complete().getContentRaw();
-		if (!content.startsWith(Config.PREFIX.get() + WhitelistCommand.NAME) || !event.getReactionEmote().getName().equals("\u2705") || !isOp(event.getMember()))
+		if (!content.startsWith(Config.PREFIX.get() + CommandRegistry.WHITELIST_COMMAND.getName()) || !event.getReactionEmote().getName().equals("\u2705") || !isOp(event.getMember()))
 			return;
 		String[] playerName = content.split(" ");
 
@@ -116,5 +138,18 @@ public class DiscordBot extends ListenerAdapter {
 			}
 		}
 		return s;
+	}
+
+	private Optional<Guild> getGuild() {
+		if (jda == null)
+			return Optional.empty();
+		String channelId = Config.REDIRECT_CHANNEL_ID.get();
+		if (channelId.isEmpty())
+			return Optional.empty();
+
+		TextChannel channel = jda.getTextChannelById(channelId);
+		if (channel == null)
+			return Optional.empty();
+		return Optional.of(channel.getGuild());
 	}
 }

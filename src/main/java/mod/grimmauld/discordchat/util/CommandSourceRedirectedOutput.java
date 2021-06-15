@@ -19,8 +19,8 @@ import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 public class CommandSourceRedirectedOutput extends CommandSource {
-	private final Consumer<ITextComponent> feedbackHook;
 	public final CommandSourceWrapper sourceWrapper;
+	private final Consumer<ITextComponent> feedbackHook;
 
 	private CommandSourceRedirectedOutput(Consumer<ITextComponent> feedbackHook, ICommandSource sourceIn, Vector3d posIn, Vector2f rotationIn, ServerWorld worldIn, int permissionLevelIn, String nameIn, ITextComponent displayNameIn, MinecraftServer serverIn, @Nullable Entity entityIn, boolean feedbackDisabledIn, ResultConsumer<CommandSource> resultConsumerIn, EntityAnchorArgument.Type entityAnchorTypeIn) {
 		super(sourceIn, posIn, rotationIn, worldIn, permissionLevelIn, nameIn, displayNameIn, serverIn, entityIn, feedbackDisabledIn, resultConsumerIn, entityAnchorTypeIn);
@@ -30,7 +30,8 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 	}
 
 	public static CommandSourceRedirectedOutput of(CommandSource from) {
-		return new CommandSourceRedirectedOutput(text -> {},
+		return new CommandSourceRedirectedOutput(text -> {
+		},
 			from.source,
 			from.getPosition(),
 			from.getRotation(),

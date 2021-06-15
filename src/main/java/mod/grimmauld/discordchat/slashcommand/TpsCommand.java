@@ -1,25 +1,22 @@
-package mod.grimmauld.discordchat.discordcommand;
+package mod.grimmauld.discordchat.slashcommand;
 
-import com.jagrosh.jdautilities.command.CommandEvent;
-import com.jagrosh.jdautilities.examples.doc.Author;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 
 
-@Author("Grimmauld")
-public class TpsCommand extends GrimmCommand {
-	public static final String NAME = "tps";
+public class TpsCommand extends GrimmSlashCommand {
 	private static final DecimalFormat df = new DecimalFormat("###.#");
 
-	public TpsCommand() {
-		super(NAME);
-		help = "Displays minecraft server tps.";
+	public TpsCommand(@Nullable String help, boolean global) {
+		super(help, global);
 	}
 
 	private static long mean(long[] values) {
@@ -30,7 +27,7 @@ public class TpsCommand extends GrimmCommand {
 	}
 
 	@Override
-	protected void executeChecked(CommandEvent event) {
+	protected void executeChecked(SlashCommandEvent event) {
 		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
 			double meanTickTime = mean(server.tickTimes) * 1.0E-6D;
 			double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
@@ -41,7 +38,6 @@ public class TpsCommand extends GrimmCommand {
 			eb.setColor(new Color(Math.min(255, (int) (512d * (1 - x))), Math.min(255, (int) (512d * x)), 0));
 
 
-
 			for (RegistryKey<World> dim : server.levelKeys()) {
 				long[] times = server.getTickTime(dim);
 				eb.addField("Mean tick time in " + dim.getRegistryName(), df.format(times == null ? 0 : mean(times) * 1.0E-6D) + "ms", true);
@@ -49,7 +45,7 @@ public class TpsCommand extends GrimmCommand {
 			eb.addBlankField(false);
 			eb.addField("Mean tick time", df.format(meanTickTime) + "ms", true);
 			eb.addField("Mean TPS", df.format(meanTPS), true);
-			event.getChannel().sendMessage(eb.build()).submit();
+			sendEmbedResponse(event, eb, true);
 			return true;
 		}).orElseGet(() -> sendNoServerResponse(event));
 	}

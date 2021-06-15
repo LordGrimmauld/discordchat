@@ -28,7 +28,7 @@ public class IPUtil {
 	@Nullable
 	private static String loadIp() {
 		try {
-			URL whatismyip = new URL("http://checkip.amazonaws.com");
+			URL whatismyip = new URL("https://checkip.amazonaws.com");
 			BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
 			return in.readLine();
 		} catch (Exception e) {
