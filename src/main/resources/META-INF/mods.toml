@@ -5,7 +5,7 @@ license="MIT"
 
 [[mods]]
     modId="discordchat"
-    version="0.0.3"
+    version="0.0.6"
     displayName="Dicord Chat"
     #updateJSONURL=""
     authors="Grimmauld"
