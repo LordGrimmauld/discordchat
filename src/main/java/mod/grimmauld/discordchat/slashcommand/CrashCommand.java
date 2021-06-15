@@ -24,6 +24,7 @@ public class CrashCommand extends GrimmSlashCommand {
 			return;
 		}
 
+		sendResponse(event, "Sending log to PM, make sure to have those enabled", true);
 		try {
 			Files.list(crashReports)
 				.filter(matcher::matches)

@@ -21,6 +21,7 @@ public class LatestCommand extends GrimmSlashCommand {
 			sendLackingPermissionResponse(event);
 			return;
 		}
+		sendResponse(event, "Sending log to PM, make sure to have those enabled", true);
 		event.getMember().getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendFile(logFile.toFile()).submit());
 	}
 }

@@ -46,6 +46,10 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 			from.getAnchor());
 	}
 
+	public CommandSourceRedirectedOutput boxed() {
+		return of(this);
+	}
+
 	public CommandSourceRedirectedOutput withHook(Consumer<ITextComponent> feedbackHook) {
 		return new CommandSourceRedirectedOutput(feedbackHook,
 			this.source,
@@ -58,6 +62,22 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 			this.getServer(),
 			this.getEntity(),
 			this.silent,
+			this.consumer,
+			this.getAnchor());
+	}
+
+	public CommandSourceRedirectedOutput withSilent(boolean silent) {
+		return new CommandSourceRedirectedOutput(feedbackHook,
+			this.source,
+			this.getPosition(),
+			this.getRotation(),
+			this.getLevel(),
+			this.permissionLevel,
+			this.getTextName(),
+			this.getDisplayName(),
+			this.getServer(),
+			this.getEntity(),
+			silent,
 			this.consumer,
 			this.getAnchor());
 	}
@@ -88,5 +108,11 @@ public class CommandSourceRedirectedOutput extends CommandSource {
 	public void sendFailure(ITextComponent message) {
 		feedbackHook.accept(message);
 		super.sendFailure(message);
+	}
+
+
+	public CommandSourceRedirectedOutput withAllowLogging(boolean b) {
+		sourceWrapper.withAllowLogging(b);
+		return this;
 	}
 }

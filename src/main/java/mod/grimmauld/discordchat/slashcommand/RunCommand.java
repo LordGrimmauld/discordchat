@@ -27,8 +27,12 @@ public class RunCommand extends GrimmSlashCommand {
 			server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack()
 				.withPermission(DiscordBot.isOp(event.getMember()) ? 2 : 0))
 				.withName(event.getMember().getUser().getName())
-				.withHook(text -> builder.append(text.getString()).append("\n")), cmd);
-			sendResponse(event, builder.toString(), true);
+				.withHook(text -> builder.append(text.getString()).append("\n"))
+				.withAllowLogging(true)
+				.withSilent(false)
+				, cmd);
+			String output = builder.toString();
+			sendResponse(event, output.isEmpty() ? "Empty Command Result" : output, true);
 			return true;
 		}).orElseGet(() -> sendNoServerResponse(event));
 	}
