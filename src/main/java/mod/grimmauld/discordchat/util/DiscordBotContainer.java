@@ -34,9 +34,14 @@ public class DiscordBotContainer extends LazyOptionalContainer<DiscordBot> {
 
 
 	public int relaunchBot() {
-		ifJDAPresent(JDA::shutdownNow);
+		shutdown();
 		connect(DiscordBot::new);
 		EventListener.resetSyncCycle();
 		return 1;
+	}
+
+	public void shutdown() {
+		ifJDAPresent(JDA::shutdownNow);
+		invalidate();
 	}
 }

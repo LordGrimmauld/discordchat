@@ -1,8 +1,13 @@
 package mod.grimmauld.discordchat;
 
-import mod.grimmauld.discordchat.commands.AllCommands;
+import com.mojang.brigadier.CommandDispatcher;
+import mod.grimmauld.discordchat.commands.ReloadBotCommand;
+import mod.grimmauld.discordchat.commands.StopBotCommand;
+import mod.grimmauld.discordchat.commands.TellDiscordCommand;
 import mod.grimmauld.discordchat.util.DiscordMessageQueue;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
@@ -41,7 +46,10 @@ public class EventListener {
 	@SubscribeEvent
 	public void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
-		AllCommands.register(event.getServer().getCommands().getDispatcher());
+		CommandDispatcher<CommandSource> commandDispatcher = event.getServer().getCommands().getDispatcher();
+		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(ReloadBotCommand.register()));
+		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(TellDiscordCommand.register()));
+		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(StopBotCommand.register()));
 	}
 
 	@SubscribeEvent

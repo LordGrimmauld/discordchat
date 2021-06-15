@@ -13,7 +13,7 @@ public class StopBotCommand {
 		return Commands.literal("stopBot")
 			.requires(cs -> cs.hasPermission(2))
 			.executes(ctx -> {
-				DiscordChat.BOT_INSTANCE.invalidate();
+				DiscordChat.BOT_INSTANCE.shutdown();
 				return 1;
 			});
 	}

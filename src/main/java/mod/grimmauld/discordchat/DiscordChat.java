@@ -27,6 +27,8 @@ public class DiscordChat {
 		MinecraftForge.EVENT_BUS.register(listener);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(Config::onConfigReloadLoad);
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
+
+		ManualClassLoader.load();
 	}
 
 	public static ResourceLocation asId(String path) {

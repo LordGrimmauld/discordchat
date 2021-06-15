@@ -80,9 +80,15 @@ configurations {
 
 shadowJar {
     configurations = [project.configurations.shade]
+
     relocate 'net.dv8tion.jda', 'mod.grimmauld.discordchat.repack.jda'
     relocate 'gnu.trove', 'mod.grimmauld.discordchat.repack.trove'
+    relocate 'okhttp3', 'mod.grimmauld.discordchat.repack.okhttp3'
+    // relocate 'org', 'mod.grimmauld.discordchat.repack.org'
+    relocate 'okio', 'mod.grimmauld.discordchat.repack.okio'
     relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
+    relocate 'org.codehaus', 'mod.grimmauld.discordchat.repack.codehaus'
+    relocate 'org.slf4j', 'mod.grimmauld.discordchat.repack.slf4j'
 }
 
 repositories {
