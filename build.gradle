@@ -103,10 +103,20 @@ repositories {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
     }
+
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    runtimeOnly fg.deobf("curse.maven:crt-239197:3348521")
+
     def curseapi = "com.github.TheRandomLabs:CurseAPI:master-SNAPSHOT"
     def jda = "net.dv8tion:JDA:$jda_version"
     def slf4j = "org.slf4j:slf4j-simple:1.7.25"
