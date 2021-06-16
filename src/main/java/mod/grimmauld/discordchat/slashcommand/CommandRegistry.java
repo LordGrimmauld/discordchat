@@ -22,6 +22,7 @@ public class CommandRegistry {
 		LIST_COMMAND = register("list", new GrimmSlashCommand.Builder<>(ListCommand::new).withHelp("Displays a list of all players currently on the server.")),
 		LATEST_COMMAND = register("latest", new GrimmSlashCommand.Builder<>(LatestCommand::new).withHelp("get the latest log")),
 		CRASH_COMMAND = register("crash", new GrimmSlashCommand.Builder<>(CrashCommand::new).withHelp("get the latest crash log")),
+		PACK_COMMAND = register("pack", new GrimmSlashCommand.Builder<>(PackCommand::new).withHelp("get the latest curseforge pack download")),
 		IP_COMMAND = register("ip", new GrimmSlashCommand.Builder<>(IPCommand::new).withHelp("Get the server IP"));
 
 	private CommandRegistry() {

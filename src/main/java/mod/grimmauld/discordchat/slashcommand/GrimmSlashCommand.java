@@ -3,6 +3,7 @@ package mod.grimmauld.discordchat.slashcommand;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.discordchat.Config;
+import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -14,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.BiFunction;
+import java.util.logging.Logger;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -50,10 +52,15 @@ public abstract class GrimmSlashCommand implements IForgeRegistryEntry<GrimmSlas
 		if (!(global || event.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get())))
 			return;
 
-		executeChecked(event);
+		try {
+			executeChecked(event);
+		} catch (Exception e) {
+			DiscordChat.LOGGER.error("Failed to parse command: {}", e);
+			sendResponse(event, "Ooops, something went wrong! Contact an Admin or try again later i guess....", true);
+		}
 	}
 
-	protected abstract void executeChecked(SlashCommandEvent event);
+	protected abstract void executeChecked(SlashCommandEvent event) throws Exception;
 
 	protected void sendResponse(SlashCommandEvent event, String msg, boolean ephermal) {
 		if (msg.isEmpty())

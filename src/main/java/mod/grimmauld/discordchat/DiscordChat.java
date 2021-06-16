@@ -23,12 +23,11 @@ public class DiscordChat {
 	private static final EventListener listener = new EventListener();
 
 	public DiscordChat() {
+		ManualClassLoader.load();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
 		MinecraftForge.EVENT_BUS.register(listener);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(Config::onConfigReloadLoad);
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml"));
-
-		ManualClassLoader.load();
 	}
 
 	public static ResourceLocation asId(String path) {

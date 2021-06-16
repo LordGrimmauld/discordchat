@@ -86,6 +86,7 @@ shadowJar {
     relocate 'okhttp3', 'mod.grimmauld.discordchat.repack.okhttp3'
     // relocate 'org', 'mod.grimmauld.discordchat.repack.org'
     relocate 'okio', 'mod.grimmauld.discordchat.repack.okio'
+    relocate 'com.therandomlabs.curseapi', 'mod.grimmauld.discordchat.repack.curseapi'
     relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
     relocate 'org.codehaus', 'mod.grimmauld.discordchat.repack.codehaus'
     relocate 'org.slf4j', 'mod.grimmauld.discordchat.repack.slf4j'
@@ -95,6 +96,10 @@ repositories {
     jcenter()
 
     maven {
+        url 'https://jitpack.io/'
+    }
+
+    maven {
         name 'm2-dv8tion'
         url 'https://m2.dv8tion.net/releases'
     }
@@ -102,12 +107,20 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-
+    def curseapi = "com.github.TheRandomLabs:CurseAPI:master-SNAPSHOT"
     def jda = "net.dv8tion:JDA:$jda_version"
+    def slf4j = "org.slf4j:slf4j-simple:1.7.25"
+    def okhttp = "com.squareup.okhttp3:okhttp:3.14.9"
 
     implementation jda
+    implementation curseapi
+    implementation slf4j
+    implementation okhttp
 
     shade jda
+    shade curseapi
+    shade slf4j
+    shade okhttp
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -116,13 +129,13 @@ compileJava.options.encoding = 'UTF-8'
 jar {
     manifest {
         attributes([
-            "Specification-Title": "${modid}",
-            "Specification-Vendor": "Grimmauld",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Grimmauld",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title": "${modid}",
+                "Specification-Vendor": "Grimmauld",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Grimmauld",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }

@@ -14,12 +14,14 @@ public class Config {
 	public static final ForgeConfigSpec.ConfigValue<String> OP_ROLE_NAME;
 	public static final ForgeConfigSpec.ConfigValue<String> REDIRECT_CHANNEL_ID;
 	public static final ForgeConfigSpec.IntValue SYNC_RATE;
+	public static final ForgeConfigSpec.IntValue PROJECT_ID;
 
 	static {
 		ForgeConfigSpec.Builder commonBuilder = new ForgeConfigSpec.Builder();
 
 		commonBuilder.comment("General settings").push("general");
 		TOKEN = commonBuilder.comment("Discord Bot token").define("token", "");
+		PROJECT_ID = commonBuilder.comment("Modpack Curseforge project ID").defineInRange("id", 0, 0, Integer.MAX_VALUE);
 		PREFIX = commonBuilder.comment("Discord Bot Prefix").define("prefix", "/");
 		OP_ROLE_NAME = commonBuilder.comment("Name of the role empowering people to use operator commands").define("role", "op");
 		REDIRECT_CHANNEL_ID = commonBuilder.comment("Channel to redirect messages to and from the server").define("channel", "");
