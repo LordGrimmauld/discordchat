@@ -50,12 +50,14 @@ public class DiscordBot extends ListenerAdapter {
 		jda = tmpJDA;
 
 		if (jda != null) {
-			try {
-				jda.awaitReady();
-				getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
-			} catch (InterruptedException e) {
-				DiscordChat.LOGGER.error("Something went wrong initializing slash commands: {}", e);
-			}
+			new Thread(() -> {
+				try {
+					jda.awaitReady();
+					getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
+				} catch (InterruptedException e) {
+					DiscordChat.LOGGER.error("Something went wrong initializing slash commands: {}", e);
+				}
+			}).start();
 		}
 	}
 

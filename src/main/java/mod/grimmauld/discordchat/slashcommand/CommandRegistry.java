@@ -26,6 +26,7 @@ public class CommandRegistry {
 		CRASH_COMMAND = register("crash", new GrimmSlashCommand.Builder<>(CrashCommand::new).withHelp("get the latest crash log")),
 		PACK_COMMAND = register("pack", new GrimmSlashCommand.Builder<>(PackCommand::new).withHelp("get the latest curseforge pack download")),
 		CTLOG_COMMAND = register("ctlog", new GrimmSlashCommand.Builder<>(CtlogCommand::new).withHelp("get the current crafttweaker log")),
+		SPARK_COMMAND = register("spark", new GrimmSlashCommand.Builder<>(SparkCommand::new).withHelp("spark (indev, don't touch)")),
 		IP_COMMAND = register("ip", new GrimmSlashCommand.Builder<>(IPCommand::new).withHelp("Get the server IP"));
 
 	private CommandRegistry() {

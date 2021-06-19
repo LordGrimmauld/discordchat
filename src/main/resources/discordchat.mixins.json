@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "mod.grimmauld.discordchat.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "mod.grimmauld.discordchat.mixin.MixinConfig",
+  "refmap": "discordchat.refmap.json",
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8",
+  "mixins": [
+    "SparkPlatformCreationMixin"
+  ]
+}

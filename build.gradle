@@ -1,11 +1,13 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
         mavenCentral()
+        maven { url='https://dist.creeper.host/Sponge/maven' }
+        maven {url='https://repo.spongepowered.org/maven'}
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
@@ -14,9 +16,9 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 
 version = "mc${minecraft_version}_v${mod_version}"
 group = "mod.grimmauld.${modid}"
@@ -36,6 +38,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            arg '-mixin.config=discordchat.mixins.json'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
 
@@ -48,23 +51,9 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+            arg '-mixin.config=discordchat.mixins.json'
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-
-            mods {
-                discordchat {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            property 'forge.logging.console.level', 'debug'
-            property 'fml.earlyprogresswindow', 'false'
-
-            args '--mod', "discordchat", '--all', '--output', file('src/generated/resources/')
 
             mods {
                 discordchat {
@@ -86,7 +75,6 @@ shadowJar {
     relocate 'net.dv8tion.jda', 'mod.grimmauld.discordchat.repack.jda'
     relocate 'gnu.trove', 'mod.grimmauld.discordchat.repack.trove'
     relocate 'okhttp3', 'mod.grimmauld.discordchat.repack.okhttp3'
-    // relocate 'org', 'mod.grimmauld.discordchat.repack.org'
     relocate 'okio', 'mod.grimmauld.discordchat.repack.okio'
     relocate 'com.therandomlabs.curseapi', 'mod.grimmauld.discordchat.repack.curseapi'
     relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
@@ -95,8 +83,6 @@ shadowJar {
 }
 
 repositories {
-    jcenter()
-
     maven {
         url 'https://jitpack.io/'
     }
@@ -118,6 +104,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     runtimeOnly fg.deobf("curse.maven:crt-239197:3348521")
+    implementation fg.deobf("curse.maven:spark-361579:3337641")
 
     def curseapi = "com.github.TheRandomLabs:CurseAPI:master-SNAPSHOT"
     def jda = "net.dv8tion:JDA:$jda_version"
@@ -133,6 +120,8 @@ dependencies {
     shade curseapi
     shade slf4j
     shade okhttp
+
+    annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -147,7 +136,8 @@ jar {
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
                 "Implementation-Vendor" :"Grimmauld",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "discordchat.mixins.json"
         ])
     }
 }
@@ -156,4 +146,8 @@ jar.finalizedBy('reobfJar')
 
 reobf {
     shadowJar {}
+}
+
+mixin {
+    add sourceSets.main, "discordchat.refmap.json"
 }
