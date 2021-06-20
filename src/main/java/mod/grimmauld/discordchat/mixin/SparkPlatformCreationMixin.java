@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SparkPlatform.class)
 public class SparkPlatformCreationMixin {
-	@Inject(at = @At(value = "RETURN"), method = "<init>", remap = false, require = 1)
+	@Inject(at = @At(value = "RETURN"), method = "<init>", remap = false)
 	private void onInstanceCreated(SparkPlugin plugin, CallbackInfo ci) {
 		SparkCommand.platform = (SparkPlatform) (Object) this;
 	}

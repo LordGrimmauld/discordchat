@@ -2,7 +2,6 @@
   "required": true,
   "package": "mod.grimmauld.discordchat.mixin",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "mod.grimmauld.discordchat.mixin.MixinConfig",
   "refmap": "discordchat.refmap.json",
   "client": [
   ],
