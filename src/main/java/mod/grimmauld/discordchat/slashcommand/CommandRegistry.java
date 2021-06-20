@@ -1,11 +1,15 @@
 package mod.grimmauld.discordchat.slashcommand;
 
+import mod.grimmauld.discordchat.slashcommand.compat.spark.SparkCommand;
 import net.minecraft.util.LazyValue;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+
+import javax.annotation.Nullable;
 
 import static mod.grimmauld.discordchat.DiscordChat.asId;
 
@@ -16,6 +20,7 @@ public class CommandRegistry {
 	);
 
 	@SuppressWarnings("unused")
+	@Nullable
 	public static final GrimmSlashCommand
 		TPS_COMMAND = register("tps", new GrimmSlashCommand.Builder<>(TpsCommand::new).withHelp("Get the current server tps")),
 		WHITELIST_COMMAND = register("whitelist", new GrimmSlashCommand.Builder<>(WhitelistCommand::new).withHelp("Opens a whitelist request to operators. Operators can accept by checkmark.")),
@@ -26,7 +31,7 @@ public class CommandRegistry {
 		CRASH_COMMAND = register("crash", new GrimmSlashCommand.Builder<>(CrashCommand::new).withHelp("get the latest crash log")),
 		PACK_COMMAND = register("pack", new GrimmSlashCommand.Builder<>(PackCommand::new).withHelp("get the latest curseforge pack download")),
 		CTLOG_COMMAND = register("ctlog", new GrimmSlashCommand.Builder<>(CtlogCommand::new).withHelp("get the current crafttweaker log")),
-		SPARK_COMMAND = register("spark", new GrimmSlashCommand.Builder<>(SparkCommand::new).withHelp("spark (indev, don't touch)")),
+		SPARK_COMMAND = register("spark", new GrimmSlashCommand.Builder<>(() -> SparkCommand::new).withHelp("Profile the current server load").withCondition(ModList.get().isLoaded("spark"))),
 		IP_COMMAND = register("ip", new GrimmSlashCommand.Builder<>(IPCommand::new).withHelp("Get the server IP"));
 
 	private CommandRegistry() {
@@ -38,8 +43,11 @@ public class CommandRegistry {
 	}
 
 
+	@Nullable
 	private static GrimmSlashCommand register(String id, GrimmSlashCommand.Builder<? extends GrimmSlashCommand> commandBuilder) {
 		GrimmSlashCommand command = commandBuilder.build(asId(id));
+		if (command == null)
+			return null;
 		COMMAND_REGISTRY.get().register(command);
 		return command;
 	}

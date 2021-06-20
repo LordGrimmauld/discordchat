@@ -1,5 +1,6 @@
-package mod.grimmauld.discordchat.slashcommand;
+package mod.grimmauld.discordchat.slashcommand.compat.spark;
 
+import mcp.MethodsReturnNonnullByDefault;
 import me.lucko.spark.common.SparkPlatform;
 import me.lucko.spark.common.command.Arguments;
 import me.lucko.spark.common.command.CommandModule;
@@ -7,8 +8,12 @@ import me.lucko.spark.common.command.CommandResponseHandler;
 import me.lucko.spark.common.command.modules.SamplerModule;
 import me.lucko.spark.common.command.sender.CommandSender;
 import mod.grimmauld.discordchat.DiscordChat;
+import mod.grimmauld.discordchat.slashcommand.GrimmSlashCommand;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -20,6 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+@MethodsReturnNonnullByDefault
 public class SparkCommand extends GrimmSlashCommand {
 	@Nullable
 	public static SparkPlatform platform = null;
@@ -91,7 +97,16 @@ public class SparkCommand extends GrimmSlashCommand {
 
 		DiscordCommandSender sender = new DiscordCommandSender(outputCollection, event.getUser().getName());
 		CommandResponseHandlerWrapper handler = new CommandResponseHandlerWrapper(outputCollection, platform, sender);
-		Arguments arguments = new Arguments(Arrays.asList("--timeout", "120"));
+
+
+		long duration = event.getOptions()
+			.stream()
+			.filter(optionMapping -> optionMapping.getName().equals("duration") && optionMapping.getType() == OptionType.INTEGER)
+			.map(OptionMapping::getAsLong)
+			.findFirst()
+			.orElse(120L);
+
+		Arguments arguments = new Arguments(Arrays.asList("--timeout", String.valueOf(duration), "--thread", "*"));
 
 		try {
 			startProfiler(samplerModule, sender, handler, arguments);
@@ -109,7 +124,7 @@ public class SparkCommand extends GrimmSlashCommand {
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
-			for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos(150); stop > System.nanoTime() && hook != null; ) {
+			for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos((long) Math.ceil(duration * 1.5)); stop > System.nanoTime() && hook != null; ) {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
@@ -118,5 +133,11 @@ public class SparkCommand extends GrimmSlashCommand {
 				hook.editOriginal(getExceptLast(outputCollection)).submit();
 			}
 		}).start();
+	}
+
+	@Override
+	protected CommandData attachExtraData(CommandData data) {
+		data.addOption(OptionType.INTEGER, "duration", "The time span over which to run the profiling [in seconds]");
+		return super.attachExtraData(data);
 	}
 }

@@ -30,7 +30,7 @@ public class WhitelistCommand extends GrimmSlashCommand {
 
 	@Override
 	protected CommandData attachExtraData(CommandData data) {
-		data.addOption(OptionType.STRING, "ign", "Your in-game-name to whitelist");
+		data.addOption(OptionType.STRING, "ign", "Your in-game-name to whitelist", true);
 		return super.attachExtraData(data);
 	}
 }

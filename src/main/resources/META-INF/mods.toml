@@ -1,11 +1,11 @@
 modLoader="javafml"
 loaderVersion="[36,)"
 license="MIT"
-#issueTrackerURL=""
+issueTrackerURL="https://github.com/LordGrimmauld/discordchat/issues"
 
 [[mods]]
     modId="discordchat"
-    version="0.0.6"
+    version="0.0.7"
     displayName="Dicord Chat"
     #updateJSONURL=""
     authors="Grimmauld"

@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.slashcommand;
+package mod.grimmauld.discordchat.slashcommand.compat.spark;
 
 import me.lucko.spark.common.command.sender.CommandSender;
 import me.lucko.spark.lib.adventure.text.Component;

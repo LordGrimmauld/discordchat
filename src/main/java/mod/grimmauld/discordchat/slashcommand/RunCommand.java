@@ -25,11 +25,11 @@ public class RunCommand extends GrimmSlashCommand {
 				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("");
 
 			server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack()
-				.withPermission(DiscordBot.isOp(event.getMember()) ? 2 : 0))
-				.withName(event.getMember().getUser().getName())
-				.withHook(text -> builder.append(text.getString()).append("\n"))
-				.withAllowLogging(true)
-				.withSilent(false)
+					.withPermission(DiscordBot.isOp(event.getMember()) ? 2 : 0))
+					.withName(event.getMember().getUser().getName())
+					.withHook(text -> builder.append(text.getString()).append("\n"))
+					.withAllowLogging(true)
+					.withSilent(false)
 				, cmd);
 			String output = builder.toString();
 			sendResponse(event, output.isEmpty() ? "Empty Command Result" : output, true);
@@ -39,7 +39,7 @@ public class RunCommand extends GrimmSlashCommand {
 
 	@Override
 	protected CommandData attachExtraData(CommandData data) {
-		data.addOption(OptionType.STRING, "cmd", "The minecraft command to run");
+		data.addOption(OptionType.STRING, "cmd", "The minecraft command to run", true);
 		return super.attachExtraData(data);
 	}
 }

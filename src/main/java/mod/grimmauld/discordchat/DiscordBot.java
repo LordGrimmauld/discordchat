@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -48,17 +49,6 @@ public class DiscordBot extends ListenerAdapter {
 			tmpJDA = null;
 		}
 		jda = tmpJDA;
-
-		if (jda != null) {
-			new Thread(() -> {
-				try {
-					jda.awaitReady();
-					getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
-				} catch (InterruptedException e) {
-					DiscordChat.LOGGER.error("Something went wrong initializing slash commands: {}", e);
-				}
-			}).start();
-		}
 	}
 
 	public static boolean isOp(@Nullable Member member) {
@@ -112,8 +102,18 @@ public class DiscordBot extends ListenerAdapter {
 	}
 
 	@Override
+	public void onReady(@NotNull ReadyEvent event) {
+		super.onReady(event);
+		getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
+	}
+
+	@Override
 	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
 		String content = event.retrieveMessage().complete().getContentRaw();
+		if (CommandRegistry.WHITELIST_COMMAND == null) {
+			event.getChannel().sendMessage("Can't whitelist player: Can't find whitelist command").submit();
+			return;
+		}
 		if (!content.startsWith(Config.PREFIX.get() + CommandRegistry.WHITELIST_COMMAND.getName()) || !event.getReactionEmote().getName().equals("\u2705") || !isOp(event.getMember()))
 			return;
 		String[] playerName = content.split(" ");

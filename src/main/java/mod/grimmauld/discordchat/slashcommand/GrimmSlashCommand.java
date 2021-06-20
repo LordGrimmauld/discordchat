@@ -1,7 +1,6 @@
 package mod.grimmauld.discordchat.slashcommand;
 
 
-import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,9 +14,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.BiFunction;
-import java.util.logging.Logger;
+import java.util.function.Supplier;
 
-@MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class GrimmSlashCommand implements IForgeRegistryEntry<GrimmSlashCommand> {
 
@@ -110,14 +108,18 @@ public abstract class GrimmSlashCommand implements IForgeRegistryEntry<GrimmSlas
 		return help != null ? help : "no help can be provided";
 	}
 
-	public static final class Builder<T extends GrimmSlashCommand> {
-		private final BiFunction<String, Boolean, T> commandSupplier;
+	public static class Builder<T extends GrimmSlashCommand> {
+		private final Supplier<BiFunction<String, Boolean, T>> commandSupplier;
 		private boolean global = false;
 
 		@Nullable
 		private String help = null;
 
 		public Builder(BiFunction<String, Boolean, T> commandSupplier) {
+			this(() -> commandSupplier);
+		}
+
+		public Builder(Supplier<BiFunction<String, Boolean, T>> commandSupplier) {
 			this.commandSupplier = commandSupplier;
 		}
 
@@ -131,8 +133,48 @@ public abstract class GrimmSlashCommand implements IForgeRegistryEntry<GrimmSlas
 			return this;
 		}
 
+		public ConditionalBuilder<T> withCondition(boolean shouldBuild) {
+			ConditionalBuilder<T> builder = new ConditionalBuilder<>(commandSupplier, shouldBuild);
+			if (global)
+				builder.global();
+			if (help != null)
+				builder.withHelp(help);
+			return builder;
+		}
+
 		public GrimmSlashCommand build(ResourceLocation resourceLocation) {
-			return commandSupplier.apply(help, global).setRegistryName(resourceLocation);
+			return commandSupplier.get().apply(help, global).setRegistryName(resourceLocation);
+		}
+	}
+
+	public static final class ConditionalBuilder<T extends GrimmSlashCommand> extends Builder<T> {
+
+		private final boolean shouldBuild;
+
+
+		private ConditionalBuilder(Supplier<BiFunction<String, Boolean, T>> commandSupplier, boolean shouldBuild) {
+			super(commandSupplier);
+			this.shouldBuild = shouldBuild;
+		}
+
+		@Override
+		public ConditionalBuilder<T> withHelp(String help) {
+			super.withHelp(help);
+			return this;
+		}
+
+		@Override
+		public ConditionalBuilder<T> global() {
+			super.global();
+			return this;
+		}
+
+		@Nullable
+		@Override
+		public GrimmSlashCommand build(ResourceLocation resourceLocation) {
+			if (shouldBuild)
+				return super.build(resourceLocation);
+			return null;
 		}
 	}
 }
