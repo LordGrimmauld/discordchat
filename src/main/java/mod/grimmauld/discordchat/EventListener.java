@@ -17,12 +17,14 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 
 
 @SuppressWarnings("unused")
+@Mod.EventBusSubscriber(modid = DiscordChat.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventListener {
 	static int tickSyncCycle = Config.SYNC_RATE.get();
 
@@ -32,20 +34,20 @@ public class EventListener {
 	}
 
 	@SubscribeEvent
-	public void onServerStarted(FMLServerStartedEvent event) {
+	public static void onServerStarted(FMLServerStartedEvent event) {
 		DiscordChat.BOT_INSTANCE.relaunchBot();
 		DiscordMessageQueue.INSTANCE.queue("Server started", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
-	public void onServerStopped(FMLServerStoppedEvent event) {
+	public static void onServerStopped(FMLServerStoppedEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
-		DiscordMessageQueue.INSTANCE.send();
+		DiscordMessageQueue.INSTANCE.send(true);
 		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
 	}
 
 	@SubscribeEvent
-	public void serverStarted(FMLServerStartingEvent event) {
+	public static void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
 		CommandDispatcher<CommandSource> commandDispatcher = event.getServer().getCommands().getDispatcher();
 		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(ReloadBotCommand.register()));
@@ -54,38 +56,38 @@ public class EventListener {
 	}
 
 	@SubscribeEvent
-	public void chatEvent(ServerChatEvent event) {
+	public static void chatEvent(ServerChatEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("**[MC " + event.getUsername() + "]** " + event.getMessage().replace("@", "@ "), DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
-	public void serverTickEvent(TickEvent.ServerTickEvent event) {
+	public static void serverTickEvent(TickEvent.ServerTickEvent event) {
 		tickSyncCycle--;
 		if (tickSyncCycle == 0) {
 			resetSyncCycle();
-			DiscordMessageQueue.INSTANCE.send();
+			DiscordMessageQueue.INSTANCE.send(false);
 		}
 	}
 
 	@SubscribeEvent
-	public void playerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void playerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
 		DiscordMessageQueue.INSTANCE.queue(event.getPlayer().getName().getString() + " joined the game", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
-	public void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+	public static void playerLoggedOutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
 		DiscordMessageQueue.INSTANCE.queue(event.getPlayer().getName().getString() + " left the game", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
-	public void playerDieEvent(LivingDeathEvent event) {
+	public static void playerDieEvent(LivingDeathEvent event) {
 		if (!(event.getEntity() instanceof ServerPlayerEntity) || !event.getEntity().level.getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES))
 			return;
 		DiscordMessageQueue.INSTANCE.queue(((ServerPlayerEntity) event.getEntity()).getCombatTracker().getDeathMessage().getString(), DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
-	public void advancementEvent(AdvancementEvent event) {
+	public static void advancementEvent(AdvancementEvent event) {
 		Advancement advancement = event.getAdvancement();
 		if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceChat() && event.getPlayer().level.getGameRules().getBoolean(GameRules.RULE_ANNOUNCE_ADVANCEMENTS)) {
 			DiscordMessageQueue.INSTANCE.queue(new TranslationTextComponent("chat.type.advancement." + advancement.getDisplay().getFrame().getName(), event.getPlayer().getDisplayName(), advancement.getChatComponent()).getString().replace("[", "**[").replace("]", "]**"), DiscordChat.LOGGER::warn);
