@@ -26,6 +26,9 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 @SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = DiscordChat.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventListener {
+	private EventListener() {
+	}
+
 	static int tickSyncCycle = Config.SYNC_RATE.get();
 
 	public static void resetSyncCycle() {
@@ -57,7 +60,7 @@ public class EventListener {
 
 	@SubscribeEvent
 	public static void chatEvent(ServerChatEvent event) {
-		DiscordMessageQueue.INSTANCE.queue("**[MC " + event.getUsername() + "]** " + event.getMessage().replace("@", "@ "), DiscordChat.LOGGER::warn);
+		DiscordMessageQueue.INSTANCE.queue(event);
 	}
 
 	@SubscribeEvent

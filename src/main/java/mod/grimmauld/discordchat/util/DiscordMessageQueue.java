@@ -3,15 +3,15 @@ package mod.grimmauld.discordchat.util;
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordChat;
+import mod.grimmauld.discordchat.webhooks.Webhook;
+import mod.grimmauld.discordchat.webhooks.WebhookMessage;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.minecraftforge.event.ServerChatEvent;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -22,6 +22,7 @@ public class DiscordMessageQueue {
 	public static final DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
 	private StringBuilder builder = new StringBuilder();
+	private final Collection<ServerChatEvent> chatQueue = new ArrayList<>();
 
 
 	private static int send(String msg, Collection<Consumer<String>> handlers, boolean waitForResponse) {
@@ -58,6 +59,16 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
+		chatQueue.forEach(event -> {
+			String content = event.getMessage().replace("@", "@ ");
+			String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
+
+			if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
+				queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
+			}
+		});
+		chatQueue.clear();
+
 		if (send(builder.toString(), errorHooks, waitSend) == 0) {
 			builder = new StringBuilder();
 			errorHooks.clear();
@@ -73,5 +84,9 @@ public class DiscordMessageQueue {
 		if (errorConsumer != null)
 			errorHooks.add(errorConsumer);
 		return 0;
+	}
+
+	public void queue(ServerChatEvent event) {
+		chatQueue.add(event);
 	}
 }
