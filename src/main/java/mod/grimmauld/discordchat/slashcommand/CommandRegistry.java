@@ -32,6 +32,7 @@ public class CommandRegistry {
 		PACK_COMMAND = register("pack", new GrimmSlashCommand.Builder<>(PackCommand::new).global().withHelp("get the latest curseforge pack download")),
 		CTLOG_COMMAND = register("ctlog", new GrimmSlashCommand.Builder<>(CtlogCommand::new).withHelp("get the current crafttweaker log")),
 		SPARK_COMMAND = register("spark", new GrimmSlashCommand.Builder<>(() -> SparkCommand::new).withHelp("Profile the current server load").withCondition(ModList.get().isLoaded("spark"))),
+		VERSION_COMMAND = register("version", new GrimmSlashCommand.Builder<>(VersionCommand::new).global().withHelp("Get the current version of discord chat integration")),
 		IP_COMMAND = register("ip", new GrimmSlashCommand.Builder<>(IPCommand::new).global().withHelp("Get the server IP"));
 
 	private CommandRegistry() {
