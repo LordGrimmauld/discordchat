@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = DiscordChat.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Config {
@@ -31,7 +30,7 @@ public class Config {
 		PREFIX = commonBuilder.comment("Discord Bot Prefix").define("prefix", "/");
 		OP_ROLE_NAME = commonBuilder.comment("Name of the role empowering people to use operator commands").define("role", "op");
 		REDIRECT_CHANNEL_ID = commonBuilder.comment("Channel to redirect messages to and from the server").define("channel", "");
-		CRASH_CHANNEL_ID = commonBuilder.comment("Channel to redirect crashes from the server").define("channel", "");
+		CRASH_CHANNEL_ID = commonBuilder.comment("Channel to redirect crashes from the server").define("crashchannel", "");
 		WEBHOOK_URL = commonBuilder.comment("Webhook url for fancy player messages").define("webhookurl", "");
 		SYNC_RATE = commonBuilder.comment("Discord sync rate (MC > discord)").defineInRange("sync", 30, 0, 1000);
 		commonBuilder.pop();
