@@ -77,10 +77,10 @@ shadowJar {
     relocate 'okhttp3', 'mod.grimmauld.discordchat.repack.okhttp3'
     relocate 'okio', 'mod.grimmauld.discordchat.repack.okio'
     relocate 'com.therandomlabs.curseapi', 'mod.grimmauld.discordchat.repack.curseapi'
-//    relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
+    relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
     relocate 'org.apache.http', 'mod.grimmauld.discordchat.repack.http'
     relocate 'org.apache.logging', 'mod.grimmauld.discordchat.repack.logging'
-    relocate 'org.apache.commons', 'mod.grimmauld.discordchat.repack.commons'
+    //  relocate 'org.apache.commons', 'mod.grimmauld.discordchat.repack.commons'
     relocate 'org.codehaus', 'mod.grimmauld.discordchat.repack.codehaus'
     relocate 'org.slf4j', 'mod.grimmauld.discordchat.repack.slf4j'
 }
@@ -116,23 +116,26 @@ dependencies {
     def curseapi = "com.github.TheRandomLabs:CurseAPI:master-SNAPSHOT"
     def jda = "net.dv8tion:JDA:$jda_version"
     def slf4j = "org.slf4j:slf4j-simple:1.7.25"
-    def okhttp = "com.squareup.okhttp3:okhttp:3.14.9"
-    def hpptcomponents = "org.apache.httpcomponents:httpclient:4.5"
-    def log4j = "org.apache.logging.log4j:log4j-core:2.14.1"
+    def okhttp = "com.squareup.okhttp3:okhttp:3.13.0"
+    def httpcomponents = "org.apache.httpcomponents:httpclient:4.3.3"
+    def log4j = "org.apache.logging.log4j:log4j-core:2.11.2"
+    def collections = "org.apache.commons:commons-collections4:4.1"
 
     implementation jda
     implementation curseapi
     implementation slf4j
     implementation okhttp
-    implementation hpptcomponents
+    implementation httpcomponents
     implementation log4j
+    implementation collections
 
     shade jda
     shade curseapi
     shade slf4j
     shade okhttp
-    shade hpptcomponents
+    shade httpcomponents
     shade log4j
+    shade collections
 
     annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }

@@ -65,7 +65,6 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message msg = event.getMessage();
-		DiscordChat.LOGGER.info("Got message: {}", msg.getContentRaw());
 
 		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot())
 			return;
@@ -105,8 +104,7 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onReady(@NotNull ReadyEvent event) {
 		super.onReady(event);
-		getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
-	}
+		getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit())); }
 
 	@Override
 	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
