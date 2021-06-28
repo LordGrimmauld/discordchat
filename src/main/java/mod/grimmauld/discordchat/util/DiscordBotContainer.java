@@ -2,7 +2,6 @@ package mod.grimmauld.discordchat.util;
 
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordBot;
-import mod.grimmauld.discordchat.EventListener;
 import mod.grimmauld.discordchat.webhooks.Webhook;
 import net.dv8tion.jda.api.JDA;
 
@@ -38,7 +37,6 @@ public class DiscordBotContainer extends LazyOptionalContainer<DiscordBot> {
 	public int relaunchBot() {
 		shutdown();
 		connect(DiscordBot::new);
-		EventListener.resetSyncCycle();
 		Webhook.webhookContainer.connect(() -> new Webhook(Config.WEBHOOK_URL.get()));
 		return 1;
 	}

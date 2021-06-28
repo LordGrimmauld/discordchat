@@ -1,10 +1,11 @@
 package mod.grimmauld.discordchat;
 
 import com.mojang.brigadier.CommandDispatcher;
+import mod.grimmauld.discordchat.MessageQueue.ChatEventMessage;
+import mod.grimmauld.discordchat.MessageQueue.DiscordMessageQueue;
 import mod.grimmauld.discordchat.commands.ReloadBotCommand;
 import mod.grimmauld.discordchat.commands.StopBotCommand;
 import mod.grimmauld.discordchat.commands.TellDiscordCommand;
-import mod.grimmauld.discordchat.util.DiscordMessageQueue;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -12,7 +13,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -29,23 +29,23 @@ public class EventListener {
 	private EventListener() {
 	}
 
-	static int tickSyncCycle = Config.SYNC_RATE.get();
-
-	public static void resetSyncCycle() {
-		int syncRate = Config.SYNC_RATE.get();
-		tickSyncCycle = syncRate > 0 ? syncRate : -1;
-	}
-
 	@SubscribeEvent
 	public static void onServerStarted(FMLServerStartedEvent event) {
 		DiscordChat.BOT_INSTANCE.relaunchBot();
+		DiscordChat.BOT_INSTANCE.ifJDAPresent(jda -> {
+			try {
+				jda.awaitReady();
+			} catch (InterruptedException e) {
+				DiscordChat.LOGGER.error("Error while waiting for JDA to be ready: {}", e.getMessage());
+			}
+		});
 		DiscordMessageQueue.INSTANCE.queue("Server started", DiscordChat.LOGGER::warn);
 	}
 
 	@SubscribeEvent
 	public static void onServerStopped(FMLServerStoppedEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
-		DiscordMessageQueue.INSTANCE.send(true);
+		DiscordMessageQueue.INSTANCE.sendAll();
 		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
 	}
 
@@ -60,16 +60,7 @@ public class EventListener {
 
 	@SubscribeEvent
 	public static void chatEvent(ServerChatEvent event) {
-		DiscordMessageQueue.INSTANCE.queue(event);
-	}
-
-	@SubscribeEvent
-	public static void serverTickEvent(TickEvent.ServerTickEvent event) {
-		tickSyncCycle--;
-		if (tickSyncCycle == 0) {
-			resetSyncCycle();
-			DiscordMessageQueue.INSTANCE.send(false);
-		}
+		DiscordMessageQueue.INSTANCE.queue(new ChatEventMessage(event));
 	}
 
 	@SubscribeEvent
