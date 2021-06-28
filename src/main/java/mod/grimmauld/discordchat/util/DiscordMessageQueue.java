@@ -12,8 +12,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
@@ -21,9 +23,10 @@ import java.util.function.Consumer;
 public class DiscordMessageQueue {
 	public static final DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
-	private final Collection<ServerChatEvent> chatQueue = new ArrayList<>();
+	private final BlockingQueue<ServerChatEvent> chatQueue = new LinkedBlockingQueue<>();
 	private StringBuilder builder = new StringBuilder();
-	private boolean lock = false;
+	@Nullable
+	private Thread sendMessageThread;
 
 	private static int send(String msg, Collection<Consumer<String>> handlers, boolean waitForResponse) {
 		if (msg.isEmpty())
@@ -59,14 +62,16 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
-		if ((builder.toString().isEmpty() && chatQueue.isEmpty()) || lock)
-			return;
-
-
-		if (waitSend) {
-			this.sendBlocking();
-		} else {
-			new Thread(this::sendBlocking).start();
+		if (!chatQueue.isEmpty() && (sendMessageThread == null || !sendMessageThread.isAlive())) {
+			sendMessageThread = new Thread(this::sendBlocking);
+			sendMessageThread.start();
+			if (waitSend) {
+				try {
+					sendMessageThread.join();
+				} catch (InterruptedException e) {
+					DiscordChat.LOGGER.error("Failed to wait for message submission thread: {}", e.getMessage());
+				}
+			}
 		}
 
 		if (send(builder.toString(), errorHooks, waitSend) == 0) {
@@ -76,8 +81,6 @@ public class DiscordMessageQueue {
 	}
 
 	private void sendBlocking() {
-		lock = true;
-
 		for (ServerChatEvent event : chatQueue) {
 			String content = event.getMessage().replace("@", "@ ");
 			String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
@@ -87,7 +90,6 @@ public class DiscordMessageQueue {
 			}
 		}
 		chatQueue.clear();
-		lock = false;
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {
