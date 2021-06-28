@@ -23,6 +23,7 @@ public class DiscordMessageQueue {
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
 	private final Collection<ServerChatEvent> chatQueue = new ArrayList<>();
 	private StringBuilder builder = new StringBuilder();
+	private boolean lock = false;
 
 	private static int send(String msg, Collection<Consumer<String>> handlers, boolean waitForResponse) {
 		if (msg.isEmpty())
@@ -58,24 +59,27 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
-		if (builder.toString().isEmpty() && chatQueue.isEmpty())
+		if ((builder.toString().isEmpty() && chatQueue.isEmpty()) || lock)
 			return;
 
 		new Thread(() -> {
-			chatQueue.forEach(event -> {
+			lock = true;
+
+			for (ServerChatEvent event : chatQueue) {
 				String content = event.getMessage().replace("@", "@ ");
 				String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
 
 				if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
 					queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
 				}
-			});
+			}
 			chatQueue.clear();
 
 			if (send(builder.toString(), errorHooks, waitSend) == 0) {
 				builder = new StringBuilder();
 				errorHooks.clear();
 			}
+			lock = false;
 		}).start();
 	}
 
