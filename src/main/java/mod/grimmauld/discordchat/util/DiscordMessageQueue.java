@@ -21,9 +21,8 @@ import java.util.function.Consumer;
 public class DiscordMessageQueue {
 	public static final DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
 	private final Set<Consumer<String>> errorHooks = new HashSet<>();
-	private StringBuilder builder = new StringBuilder();
 	private final Collection<ServerChatEvent> chatQueue = new ArrayList<>();
-
+	private StringBuilder builder = new StringBuilder();
 
 	private static int send(String msg, Collection<Consumer<String>> handlers, boolean waitForResponse) {
 		if (msg.isEmpty())
@@ -59,20 +58,22 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
-		chatQueue.forEach(event -> {
-			String content = event.getMessage().replace("@", "@ ");
-			String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
+		new Thread(() -> {
+			chatQueue.forEach(event -> {
+				String content = event.getMessage().replace("@", "@ ");
+				String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
 
-			if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
-				queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
+				if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
+					queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
+				}
+			});
+			chatQueue.clear();
+
+			if (send(builder.toString(), errorHooks, waitSend) == 0) {
+				builder = new StringBuilder();
+				errorHooks.clear();
 			}
-		});
-		chatQueue.clear();
-
-		if (send(builder.toString(), errorHooks, waitSend) == 0) {
-			builder = new StringBuilder();
-			errorHooks.clear();
-		}
+		}).start();
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {
