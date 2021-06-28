@@ -58,7 +58,7 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
-		if (builder.toString().isEmpty() || chatQueue.isEmpty())
+		if (builder.toString().isEmpty() && chatQueue.isEmpty())
 			return;
 
 		new Thread(() -> {
