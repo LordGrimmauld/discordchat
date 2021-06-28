@@ -58,6 +58,9 @@ public class DiscordMessageQueue {
 	}
 
 	public void send(boolean waitSend) {
+		if (builder.toString().isEmpty() || chatQueue.isEmpty())
+			return;
+
 		new Thread(() -> {
 			chatQueue.forEach(event -> {
 				String content = event.getMessage().replace("@", "@ ");
