@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(DiscordChat.MODID)
 public class DiscordChat {
 	public static final String MODID = "discordchat";
-	public static final String VERSION = "0.0.9";
+	public static final String VERSION = "0.1.0";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	public static final DiscordBotContainer BOT_INSTANCE = new DiscordBotContainer();
 	public static final LazyOptionalContainer<MinecraftServer> SERVER_INSTANCE = new LazyOptionalContainer<>();
