@@ -78,7 +78,9 @@ shadowJar {
     relocate 'okio', 'mod.grimmauld.discordchat.repack.okio'
     relocate 'com.therandomlabs.curseapi', 'mod.grimmauld.discordchat.repack.curseapi'
 //    relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
-    relocate 'org.apache', 'mod.grimmauld.discordchat.repack.apache'
+    relocate 'org.apache.http', 'mod.grimmauld.discordchat.repack.http'
+    relocate 'org.apache.logging', 'mod.grimmauld.discordchat.repack.logging'
+    relocate 'org.apache.commons', 'mod.grimmauld.discordchat.repack.commons'
     relocate 'org.codehaus', 'mod.grimmauld.discordchat.repack.codehaus'
     relocate 'org.slf4j', 'mod.grimmauld.discordchat.repack.slf4j'
 }

@@ -64,13 +64,18 @@ public class DiscordMessageQueue {
 
 
 		if (waitSend) {
-			this.sendBlocking(true);
+			this.sendBlocking();
 		} else {
-			new Thread(() -> this.sendBlocking(waitSend)).start();
+			new Thread(this::sendBlocking).start();
+		}
+
+		if (send(builder.toString(), errorHooks, waitSend) == 0) {
+			builder = new StringBuilder();
+			errorHooks.clear();
 		}
 	}
 
-	private void sendBlocking(boolean waitSend) {
+	private void sendBlocking() {
 		lock = true;
 
 		for (ServerChatEvent event : chatQueue) {
@@ -82,11 +87,6 @@ public class DiscordMessageQueue {
 			}
 		}
 		chatQueue.clear();
-
-		if (send(builder.toString(), errorHooks, waitSend) == 0) {
-			builder = new StringBuilder();
-			errorHooks.clear();
-		}
 		lock = false;
 	}
 
