@@ -62,25 +62,32 @@ public class DiscordMessageQueue {
 		if ((builder.toString().isEmpty() && chatQueue.isEmpty()) || lock)
 			return;
 
-		new Thread(() -> {
-			lock = true;
 
-			for (ServerChatEvent event : chatQueue) {
-				String content = event.getMessage().replace("@", "@ ");
-				String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
+		if (waitSend) {
+			this.sendBlocking(true);
+		} else {
+			new Thread(() -> this.sendBlocking(waitSend)).start();
+		}
+	}
 
-				if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
-					queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
-				}
+	private void sendBlocking(boolean waitSend) {
+		lock = true;
+
+		for (ServerChatEvent event : chatQueue) {
+			String content = event.getMessage().replace("@", "@ ");
+			String avatar = String.format("https://crafatar.com/avatars/%s?overlay", event.getPlayer().getUUID());
+
+			if (!Webhook.webhookContainer.runIfPresent(hook -> hook.sendMessage(new WebhookMessage(event.getUsername(), avatar, content))).orElse(false)) {
+				queue("**[MC " + event.getUsername() + "]** " + content, DiscordChat.LOGGER::warn);
 			}
-			chatQueue.clear();
+		}
+		chatQueue.clear();
 
-			if (send(builder.toString(), errorHooks, waitSend) == 0) {
-				builder = new StringBuilder();
-				errorHooks.clear();
-			}
-			lock = false;
-		}).start();
+		if (send(builder.toString(), errorHooks, waitSend) == 0) {
+			builder = new StringBuilder();
+			errorHooks.clear();
+		}
+		lock = false;
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {

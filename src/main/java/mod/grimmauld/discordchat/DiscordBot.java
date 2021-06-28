@@ -65,6 +65,7 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message msg = event.getMessage();
+		DiscordChat.LOGGER.info("Got message: {}", msg.getContentRaw());
 
 		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot())
 			return;
