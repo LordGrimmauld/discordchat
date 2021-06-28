@@ -80,6 +80,7 @@ shadowJar {
     relocate 'org.apache.commons.collections4', 'mod.grimmauld.discordchat.repack.collections'
     relocate 'org.apache.http', 'mod.grimmauld.discordchat.repack.http'
     relocate 'org.apache.logging', 'mod.grimmauld.discordchat.repack.logging'
+    relocate 'org.apache.commons.logging', 'mod.grimmauld.discordchat.repack.commons.logging'
     //  relocate 'org.apache.commons', 'mod.grimmauld.discordchat.repack.commons'
     relocate 'org.codehaus', 'mod.grimmauld.discordchat.repack.codehaus'
     relocate 'org.slf4j', 'mod.grimmauld.discordchat.repack.slf4j'
@@ -120,6 +121,7 @@ dependencies {
     def httpcomponents = "org.apache.httpcomponents:httpclient:4.3.3"
     def log4j = "org.apache.logging.log4j:log4j-core:2.11.2"
     def collections = "org.apache.commons:commons-collections4:4.1"
+    def commonslogging = "commons-logging:commons-logging:1.1.3"
 
     implementation jda
     implementation curseapi
@@ -128,6 +130,7 @@ dependencies {
     implementation httpcomponents
     implementation log4j
     implementation collections
+    implementation commonslogging
 
     shade jda
     shade curseapi
@@ -136,6 +139,7 @@ dependencies {
     shade httpcomponents
     shade log4j
     shade collections
+    shade commonslogging
 
     annotationProcessor 'org.spongepowered:mixin:0.8:processor'
 }
