@@ -189,7 +189,8 @@ def hasUnstaged = { ->
         standardOutput = stdout
     }
     def result = stdout.toString().trim()
-    println("Found stageable results:\n${result}\n")
+    if (!result.isEmpty())
+        println("Found stageable results:\n${result}\n")
     return !result.isEmpty()
 }
 
