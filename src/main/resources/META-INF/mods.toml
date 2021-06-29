@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/LordGrimmauld/discordchat/issues"
 
 [[mods]]
     modId="discordchat"
-    version="0.1.0"
+    version="${file.jarVersion}"
     displayName="Dicord Chat"
     #updateJSONURL=""
     authors="Grimmauld"

@@ -24,7 +24,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = DiscordChat.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = BuildConfig.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EventListener {
 	private EventListener() {
 	}
@@ -53,9 +53,9 @@ public class EventListener {
 	public static void serverStarted(FMLServerStartingEvent event) {
 		DiscordChat.SERVER_INSTANCE.connect(event::getServer);
 		CommandDispatcher<CommandSource> commandDispatcher = event.getServer().getCommands().getDispatcher();
-		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(ReloadBotCommand.register()));
-		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(TellDiscordCommand.register()));
-		commandDispatcher.register(Commands.literal(DiscordChat.MODID).then(StopBotCommand.register()));
+		commandDispatcher.register(Commands.literal(BuildConfig.MODID).then(ReloadBotCommand.register()));
+		commandDispatcher.register(Commands.literal(BuildConfig.MODID).then(TellDiscordCommand.register()));
+		commandDispatcher.register(Commands.literal(BuildConfig.MODID).then(StopBotCommand.register()));
 	}
 
 	@SubscribeEvent

@@ -53,7 +53,7 @@ public abstract class GrimmSlashCommand implements IForgeRegistryEntry<GrimmSlas
 		try {
 			executeChecked(event);
 		} catch (Exception e) {
-			DiscordChat.LOGGER.error("Failed to parse command: {}", e);
+			DiscordChat.LOGGER.error("Failed to parse command: {}", e.getMessage());
 			sendResponse(event, "Ooops, something went wrong! Contact an Admin or try again later i guess....", true);
 		}
 	}

@@ -13,10 +13,12 @@ buildscript {
 
 plugins {
     id'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
@@ -146,7 +148,6 @@ dependencies {
 
 compileJava.options.encoding = 'UTF-8'
 
-
 jar {
     manifest {
         attributes([
@@ -170,4 +171,24 @@ reobf {
 
 mixin {
     add sourceSets.main, "discordchat.refmap.json"
+}
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+buildConfig {
+    buildConfigField 'String', 'MODID', "${modid}"
+    buildConfigField "String", "GITHASH", "${getGitHash()}"
+
+    appName = project.name
+    version = project.version
+    clsName = 'BuildConfig'
+    packageName = project.group
+    charset = 'UTF-8'
 }
