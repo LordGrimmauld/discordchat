@@ -1,6 +1,7 @@
 package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.slashcommand.CommandRegistry;
+import mod.grimmauld.discordchat.util.ColorHelper;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.awt.*;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -66,8 +68,13 @@ public class DiscordBot extends ListenerAdapter {
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message msg = event.getMessage();
 
-		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot())
+		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot() || event.getMember() == null)
 			return;
+
+		String playerName = "["
+			+ ColorHelper.getClosest(event.getMember().getColor())
+			+ sanitize(msg.getAuthor().getName())
+			+ TextFormatting.WHITE + "] ";
 
 		if (!msg.getContentStripped().isEmpty())
 			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
@@ -75,21 +82,14 @@ public class DiscordBot extends ListenerAdapter {
 				.getPlayers()
 				.forEach(player -> player.sendMessage(
 					new StringTextComponent(
-						"[" + TextFormatting.GOLD + "D "
-							+ TextFormatting.AQUA
-							+ sanitize(msg.getAuthor().getName())
-							+ TextFormatting.WHITE + "] "
-							+ sanitize(msg.getContentStripped()))
+						playerName + sanitize(msg.getContentStripped()))
 						.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
 		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 			.getPlayerList()
 			.getPlayers()
 			.forEach(player -> player.sendMessage(
 				new StringTextComponent(
-					"[" + TextFormatting.GOLD + "D "
-						+ TextFormatting.AQUA
-						+ sanitize(msg.getAuthor().getName())
-						+ TextFormatting.WHITE + "] Uploaded a file: ")
+					playerName + "Uploaded a file: ")
 					.append(new StringTextComponent(sanitize(attachment.getUrl()))
 						.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
 						.withStyle(TextFormatting.BLUE)
@@ -104,7 +104,8 @@ public class DiscordBot extends ListenerAdapter {
 	@Override
 	public void onReady(@NotNull ReadyEvent event) {
 		super.onReady(event);
-		getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit())); }
+		getGuild().ifPresent(guild -> CommandRegistry.COMMAND_REGISTRY.get().forEach(grimmSlashCommand -> guild.upsertCommand(grimmSlashCommand.getCommandData()).submit()));
+	}
 
 	@Override
 	public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
