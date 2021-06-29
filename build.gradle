@@ -182,9 +182,18 @@ def getGitHash = { ->
     return stdout.toString().trim()
 }
 
+def hasUnstaged = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'status', '--porcelain'
+        standardOutput = stdout
+    }
+    return !stdout.toString().trim().isEmpty()
+}
+
 buildConfig {
     buildConfigField 'String', 'MODID', "${modid}"
-    buildConfigField "String", "GITHASH", "${getGitHash()}"
+    buildConfigField "String", "GITHASH", "${getGitHash()}" + (hasUnstaged() ? "-modified" : "")
 
     appName = project.name
     version = project.version
