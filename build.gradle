@@ -188,7 +188,9 @@ def hasUnstaged = { ->
         commandLine 'git', 'status', '--porcelain'
         standardOutput = stdout
     }
-    return !stdout.toString().trim().isEmpty()
+    def result = stdout.toString().trim()
+    println("Found stageable results:\n${result}\n")
+    return !result.isEmpty()
 }
 
 buildConfig {
