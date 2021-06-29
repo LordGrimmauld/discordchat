@@ -188,7 +188,7 @@ def hasUnstaged = { ->
         commandLine 'git', 'status', '--porcelain'
         standardOutput = stdout
     }
-    def result = stdout.toString().trim()
+    def result = stdout.toString().replaceAll("M gradlew", "").trim()
     if (!result.isEmpty())
         println("Found stageable results:\n${result}\n")
     return !result.isEmpty()
