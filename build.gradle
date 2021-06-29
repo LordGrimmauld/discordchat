@@ -13,7 +13,7 @@ buildscript {
 
 plugins {
     id'com.github.johnrengelman.shadow' version '5.2.0'
-    id 'de.fuerstenau.buildconfig' version '1.1.8'
+    id'com.github.gmazzo.buildconfig' version '3.0.1'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -192,12 +192,13 @@ def hasUnstaged = { ->
 }
 
 buildConfig {
-    buildConfigField 'String', 'MODID', "${modid}"
-    buildConfigField "String", "GITHASH", "${getGitHash()}" + (hasUnstaged() ? "-modified" : "")
+    buildConfigField 'String', 'MODID', "\"${modid}\""
+    buildConfigField 'String', 'VERSION', "\"${project.version}\""
+    buildConfigField 'String', 'MODID', "\"${modid}\""
+    def gitstage = "\"${getGitHash()}" + (hasUnstaged() ? "-modified" : "") + "\""
+    println("Using git stage ${gitstage}")
+    buildConfigField "String", "GITHASH", gitstage
 
-    appName = project.name
     version = project.version
-    clsName = 'BuildConfig'
     packageName = project.group
-    charset = 'UTF-8'
 }
