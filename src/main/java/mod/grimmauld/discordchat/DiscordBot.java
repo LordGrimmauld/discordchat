@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @ParametersAreNonnullByDefault
@@ -80,19 +79,19 @@ public class DiscordBot extends ListenerAdapter {
 			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 				.getPlayerList()
 				.getPlayers()
-				.forEach(player -> player.sendMessage(playerNameComponent.append(sanitize(msg.getContentStripped()))
-					.withStyle(style -> style.withClickEvent(null)), UUID.nameUUIDFromBytes(event.getAuthor().getId().getBytes()))));
+				.forEach(player -> player.sendMessage(playerNameComponent.copy().append(sanitize(msg.getContentStripped()))
+					.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
 		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 			.getPlayerList()
 			.getPlayers()
 			.stream()
 			.distinct()
 			.forEach(player -> player.sendMessage(
-				playerNameComponent.append("Uploaded a file: ")
+				playerNameComponent.copy().append("Uploaded a file: ")
 					.append(new StringTextComponent(sanitize(attachment.getUrl()))
 						.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
 						.withStyle(TextFormatting.BLUE)
-						.withStyle(TextFormatting.UNDERLINE)), UUID.nameUUIDFromBytes(event.getAuthor().getId().getBytes())))));
+						.withStyle(TextFormatting.UNDERLINE)), player.getUUID()))));
 	}
 
 	public void shutdown() {
