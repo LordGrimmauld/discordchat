@@ -1,7 +1,6 @@
 package mod.grimmauld.discordchat;
 
 import mod.grimmauld.discordchat.slashcommand.CommandRegistry;
-import mod.grimmauld.discordchat.util.ColorHelper;
 import mod.grimmauld.discordchat.util.CommandSourceRedirectedOutput;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -15,15 +14,17 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.util.SharedConstants;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.awt.*;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @ParametersAreNonnullByDefault
@@ -71,29 +72,27 @@ public class DiscordBot extends ListenerAdapter {
 		if (!msg.getChannel().getId().equals(Config.REDIRECT_CHANNEL_ID.get()) || msg.getContentRaw().startsWith(Config.PREFIX.get()) || msg.getAuthor().isBot() || event.getMember() == null)
 			return;
 
-		String playerName = "["
-			+ ColorHelper.getClosest(event.getMember().getColor())
-			+ sanitize(msg.getAuthor().getName())
-			+ TextFormatting.WHITE + "] ";
+		IFormattableTextComponent playerNameComponent = new StringTextComponent("[")
+			.append(new StringTextComponent(msg.getAuthor().getName()).setStyle(Style.EMPTY.withColor(net.minecraft.util.text.Color.fromRgb(event.getMember().getColorRaw()))))
+			.append("] ");
 
 		if (!msg.getContentStripped().isEmpty())
 			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 				.getPlayerList()
 				.getPlayers()
-				.forEach(player -> player.sendMessage(
-					new StringTextComponent(
-						playerName + sanitize(msg.getContentStripped()))
-						.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
+				.forEach(player -> player.sendMessage(playerNameComponent.append(sanitize(msg.getContentStripped()))
+					.withStyle(style -> style.withClickEvent(null)), UUID.nameUUIDFromBytes(event.getAuthor().getId().getBytes()))));
 		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
 			.getPlayerList()
 			.getPlayers()
+			.stream()
+			.distinct()
 			.forEach(player -> player.sendMessage(
-				new StringTextComponent(
-					playerName + "Uploaded a file: ")
+				playerNameComponent.append("Uploaded a file: ")
 					.append(new StringTextComponent(sanitize(attachment.getUrl()))
 						.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, attachment.getUrl())))
 						.withStyle(TextFormatting.BLUE)
-						.withStyle(TextFormatting.UNDERLINE)), player.getUUID()))));
+						.withStyle(TextFormatting.UNDERLINE)), UUID.nameUUIDFromBytes(event.getAuthor().getId().getBytes())))));
 	}
 
 	public void shutdown() {
