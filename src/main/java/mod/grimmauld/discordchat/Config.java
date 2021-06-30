@@ -19,6 +19,7 @@ public class Config {
 	public static final ForgeConfigSpec.ConfigValue<String> CRASH_CHANNEL_ID;
 	public static final ForgeConfigSpec.IntValue PROJECT_ID;
 	public static final ForgeConfigSpec.ConfigValue<String> WEBHOOK_URL;
+	public static final ForgeConfigSpec.ConfigValue<String> RESTART_SH;
 
 	static {
 		ForgeConfigSpec.Builder commonBuilder = new ForgeConfigSpec.Builder();
@@ -31,6 +32,7 @@ public class Config {
 		REDIRECT_CHANNEL_ID = commonBuilder.comment("Channel to redirect messages to and from the server").define("channel", "");
 		CRASH_CHANNEL_ID = commonBuilder.comment("Channel to redirect crashes from the server").define("crashchannel", "");
 		WEBHOOK_URL = commonBuilder.comment("Webhook url for fancy player messages").define("webhookurl", "");
+		RESTART_SH = commonBuilder.comment("File path to server start sh").define("restartscript", "");
 		commonBuilder.pop();
 
 		COMMON_CONFIG = commonBuilder.build();

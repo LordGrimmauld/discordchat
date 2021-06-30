@@ -6,6 +6,7 @@ import mod.grimmauld.discordchat.MessageQueue.DiscordMessageQueue;
 import mod.grimmauld.discordchat.commands.ReloadBotCommand;
 import mod.grimmauld.discordchat.commands.StopBotCommand;
 import mod.grimmauld.discordchat.commands.TellDiscordCommand;
+import mod.grimmauld.discordchat.util.ThreadHelper;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -45,8 +46,7 @@ public class EventListener {
 	@SubscribeEvent
 	public static void onServerStopped(FMLServerStoppedEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
-		DiscordMessageQueue.INSTANCE.sendAll();
-		DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown);
+		ThreadHelper.runAfter(() -> DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown), 3600000);
 	}
 
 	@SubscribeEvent

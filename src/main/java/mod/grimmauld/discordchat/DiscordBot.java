@@ -95,8 +95,8 @@ public class DiscordBot extends ListenerAdapter {
 	}
 
 	public void shutdown() {
-		if (jda != null)
-			jda.shutdownNow();
+		if (jda != null && jda.getStatus() != JDA.Status.SHUTDOWN && jda.getStatus() !=JDA.Status.SHUTTING_DOWN)
+			jda.shutdown();
 	}
 
 	@Override

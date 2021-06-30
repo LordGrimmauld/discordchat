@@ -34,6 +34,7 @@ public class CommandRegistry {
 		SPARK_COMMAND = register("spark", new GrimmSlashCommand.Builder<>(() -> SparkCommand::new).withHelp("Profile the current server load").withCondition(ModList.get().isLoaded("spark"))),
 		VERSION_COMMAND = register("version", new GrimmSlashCommand.Builder<>(VersionCommand::new).global().withHelp("Get the current version of discord chat integration")),
 		GIT_COMMAND = register("git", new GrimmSlashCommand.Builder<>(GitRevCommand::new).global().withHelp("Get the current git revision of this discord chat integration build")),
+		RESTART_COMMAND = register("restart", new GrimmSlashCommand.Builder<>(RestartCommand::new).withHelp("Restart the server")),
 		IP_COMMAND = register("ip", new GrimmSlashCommand.Builder<>(IPCommand::new).global().withHelp("Get the server IP"));
 
 	private CommandRegistry() {
