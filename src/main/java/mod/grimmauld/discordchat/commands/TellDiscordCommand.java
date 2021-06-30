@@ -1,7 +1,7 @@
 package mod.grimmauld.discordchat.commands;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import mod.grimmauld.discordchat.MessageQueue.DiscordMessageQueue;
+import mod.grimmauld.discordchat.message_queue.DiscordMessageQueue;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.ComponentArgument;

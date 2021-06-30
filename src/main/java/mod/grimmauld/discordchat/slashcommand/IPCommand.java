@@ -4,6 +4,9 @@ import mod.grimmauld.discordchat.util.IPUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class IPCommand extends GrimmSlashCommand {
 	public IPCommand(@Nullable String help, boolean global) {
 		super(help, global);

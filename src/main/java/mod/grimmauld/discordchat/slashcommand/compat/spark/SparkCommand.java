@@ -16,16 +16,17 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class SparkCommand extends GrimmSlashCommand {
 	@Nullable
 	public static SparkPlatform platform = null;
@@ -50,7 +51,7 @@ public class SparkCommand extends GrimmSlashCommand {
 				.orElse(null);
 
 		} catch (NoSuchFieldException | SecurityException | IllegalAccessException | ClassCastException e) {
-			DiscordChat.LOGGER.error("Can't get spark media type format: {}", e);
+			DiscordChat.LOGGER.error("Can't get spark media type format: {}", e.getMessage());
 			throw new ReflectiveOperationException("Could not invoke spark sample: " + e.getMessage());
 		}
 	}
@@ -64,7 +65,7 @@ public class SparkCommand extends GrimmSlashCommand {
 			profilerStart.setAccessible(true);
 			profilerStart.invoke(samplerModule, platform, sender, resp, arguments);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-			DiscordChat.LOGGER.error("Could not invoke spark sample: {}", e);
+			DiscordChat.LOGGER.error("Could not invoke spark sample: {}", e.getMessage());
 			throw new ReflectiveOperationException("Could not invoke spark sample: " + e.getMessage());
 		}
 	}
@@ -95,8 +96,18 @@ public class SparkCommand extends GrimmSlashCommand {
 
 		StringBuilder outputCollection = new StringBuilder();
 
-		DiscordCommandSender sender = new DiscordCommandSender(outputCollection, event.getUser().getName());
-		CommandResponseHandlerWrapper handler = new CommandResponseHandlerWrapper(outputCollection, platform, sender);
+		InteractionHook process;
+		try {
+			process = event.reply("Starting Profiling...").setEphemeral(true).submit().get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+			return;
+		}
+
+
+		Consumer<StringBuilder> onChanged = builder -> process.editOriginal(getExceptLast(builder)).submit();
+		DiscordCommandSender sender = new DiscordCommandSender(outputCollection, event.getUser().getName(), onChanged);
+		CommandResponseHandlerWrapper handler = new CommandResponseHandlerWrapper(outputCollection, platform, sender, onChanged);
 
 
 		long duration = event.getOptions()
@@ -108,31 +119,13 @@ public class SparkCommand extends GrimmSlashCommand {
 
 		Arguments arguments = new Arguments(Arrays.asList("--timeout", String.valueOf(duration), "--thread", "*"));
 
+
 		try {
 			startProfiler(samplerModule, sender, handler, arguments);
 		} catch (ReflectiveOperationException e) {
-			sendResponse(event, "Failed to start profiler: " + e.getMessage(), true);
-			return;
+			String msg = "Failed to start profiler: " + e.getMessage();
+			process.editOriginal(msg).submit();
 		}
-
-		CompletableFuture<InteractionHook> process = event.reply("Started Profiling").setEphemeral(true).submit();
-
-		new Thread(() -> {
-			InteractionHook hook = null;
-			try {
-				hook = process.get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			for (long stop = System.nanoTime() + TimeUnit.SECONDS.toNanos((long) Math.ceil(duration * 1.5)); stop > System.nanoTime() && hook != null; ) {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-				}
-
-				hook.editOriginal(getExceptLast(outputCollection)).submit();
-			}
-		}).start();
 	}
 
 	@Override

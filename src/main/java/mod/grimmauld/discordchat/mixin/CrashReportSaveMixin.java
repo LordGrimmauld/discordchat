@@ -16,13 +16,18 @@ import java.util.concurrent.ExecutionException;
 
 @Mixin(MinecraftServer.class)
 public class CrashReportSaveMixin {
+	private static int handleError(String s) {
+		DiscordChat.LOGGER.error(s);
+		return 1;
+	}
+
 	@Inject(at = @At("RETURN"), method = "onServerCrash")
 	private void onOnServerCrash(CrashReport crash, CallbackInfo ci) {
 		if (crash == null || crash.saveFile == null)
 			return;
 
 		DiscordChat.BOT_INSTANCE.ifJDAPresent(jda -> {
-			String channelId = Config.REDIRECT_CHANNEL_ID.get();
+			String channelId = Config.CRASH_CHANNEL_ID.get();
 			if (channelId.isEmpty())
 				return handleError("Channel Id may not be empty!");
 
@@ -38,10 +43,5 @@ public class CrashReportSaveMixin {
 			}
 			return 0;
 		}).orElseGet(() -> handleError("Can not send message to discord: jda not initialized"));
-	}
-
-	private static int handleError(String s) {
-		DiscordChat.LOGGER.error(s);
-		return 1;
 	}
 }

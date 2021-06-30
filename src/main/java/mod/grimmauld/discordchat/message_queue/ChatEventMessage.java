@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.MessageQueue;
+package mod.grimmauld.discordchat.message_queue;
 
 import mod.grimmauld.discordchat.DiscordChat;
 import mod.grimmauld.discordchat.webhooks.Webhook;

@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.MessageQueue;
+package mod.grimmauld.discordchat.message_queue;
 
 import mcp.MethodsReturnNonnullByDefault;
 import mod.grimmauld.discordchat.DiscordChat;
@@ -14,10 +14,9 @@ import java.util.function.Consumer;
 public class DiscordMessageQueue {
 	public static final DiscordMessageQueue INSTANCE = new DiscordMessageQueue();
 	private final BlockingQueue<IMessage> chatQueue = new LinkedBlockingQueue<>();
-	private final Thread sendMessageThread;
 
 	public DiscordMessageQueue() {
-		sendMessageThread = new Thread(() -> {
+		new Thread(() -> {
 			while (true) {
 				try {
 					chatQueue.take().send();
@@ -25,15 +24,7 @@ public class DiscordMessageQueue {
 					DiscordChat.LOGGER.error("Error while reading message queue: {}", e.getMessage());
 				}
 			}
-		});
-		sendMessageThread.start();
-	}
-
-
-	public void sendAll() {
-		while (!chatQueue.isEmpty()) {
-			chatQueue.poll().send();
-		}
+		}).start();
 	}
 
 	public int queue(String msg, @Nullable Consumer<String> errorConsumer) {

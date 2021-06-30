@@ -8,10 +8,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-
+@ParametersAreNonnullByDefault
 public class TpsCommand extends GrimmSlashCommand {
 	private static final DecimalFormat df = new DecimalFormat("###.#");
 

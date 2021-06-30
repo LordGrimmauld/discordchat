@@ -1,11 +1,11 @@
 package mod.grimmauld.discordchat;
 
 import com.mojang.brigadier.CommandDispatcher;
-import mod.grimmauld.discordchat.MessageQueue.ChatEventMessage;
-import mod.grimmauld.discordchat.MessageQueue.DiscordMessageQueue;
 import mod.grimmauld.discordchat.commands.ReloadBotCommand;
 import mod.grimmauld.discordchat.commands.StopBotCommand;
 import mod.grimmauld.discordchat.commands.TellDiscordCommand;
+import mod.grimmauld.discordchat.message_queue.ChatEventMessage;
+import mod.grimmauld.discordchat.message_queue.DiscordMessageQueue;
 import mod.grimmauld.discordchat.util.ThreadHelper;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.command.CommandSource;

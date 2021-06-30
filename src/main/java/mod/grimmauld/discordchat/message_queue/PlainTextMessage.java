@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.MessageQueue;
+package mod.grimmauld.discordchat.message_queue;
 
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordChat;
@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-public class PlainTextMessage implements IMessage{
+public class PlainTextMessage implements IMessage {
 
 	private final String content;
 	private @Nullable
@@ -19,6 +19,12 @@ public class PlainTextMessage implements IMessage{
 	public PlainTextMessage(String content, @Nullable Consumer<String> errorHook) {
 		this.content = content;
 		this.errorHook = errorHook;
+	}
+
+	private static int handleError(String errorMsg, @Nullable Consumer<String> handler) {
+		if (handler != null)
+			handler.accept(errorMsg);
+		return 1;
 	}
 
 	@Override
@@ -55,11 +61,5 @@ public class PlainTextMessage implements IMessage{
 			return handleError("Error waiting for discord to send the message: " + e, errorHook);
 		}
 		return 0;
-	}
-
-	private static int handleError(String errorMsg, @Nullable Consumer<String> handler) {
-		if (handler != null)
-			handler.accept(errorMsg);
-		return 1;
 	}
 }

@@ -3,7 +3,9 @@ package mod.grimmauld.discordchat.slashcommand;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordBot;
 import mod.grimmauld.discordchat.DiscordChat;
+import mod.grimmauld.discordchat.util.ThreadHelper;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.minecraft.world.storage.SaveFormat;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -46,10 +48,24 @@ public class RestartCommand extends GrimmSlashCommand {
 
 
 		try {
+			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> {
+				SaveFormat.LevelSave lockManager = minecraftServer.storageSource;
+
+				ThreadHelper.runWithTimeout(minecraftServer::close, 10000);
+				if (minecraftServer.getRunningThread().isAlive())
+					minecraftServer.getRunningThread().stop();
+
+				if (lockManager.lock.isValid()) {
+					try {
+						lockManager.close();
+					} catch (IOException e) {
+						sendResponse(event, "Error unlocking save file: " + e.getMessage(), false);
+					}
+				}
+			});
 			Runtime.getRuntime().exec(shPath.toString());
 			event.getJDA().shutdown();
 			DiscordChat.BOT_INSTANCE.shutdown();
-			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> minecraftServer.halt(true));
 		} catch (IOException e) {
 			sendResponse(event, "Error spawning process: " + e.getMessage(), false);
 		}

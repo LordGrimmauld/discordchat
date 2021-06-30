@@ -6,8 +6,10 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.minecraft.util.INameable;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ListCommand extends GrimmSlashCommand {
 
 	public ListCommand(@Nullable String help, boolean global) {

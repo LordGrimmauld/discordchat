@@ -17,4 +17,21 @@ public class ThreadHelper {
 		}).start();
 
 	}
+
+	public static void runWithTimeout(Runnable task, long ms) {
+		Thread thread = new Thread(task);
+		thread.start();
+
+		long end = System.currentTimeMillis() + ms;
+
+		while (System.currentTimeMillis() < end) {
+			if (!thread.isAlive())
+				return;
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				return;
+			}
+		}
+	}
 }
