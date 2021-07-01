@@ -3,7 +3,6 @@ package mod.grimmauld.discordchat.slashcommand;
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordBot;
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.util.ThreadHelper;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.minecraft.world.storage.SaveFormat;
 import org.jetbrains.annotations.Nullable;
@@ -51,15 +50,22 @@ public class RestartCommand extends GrimmSlashCommand {
 			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> {
 				SaveFormat.LevelSave lockManager = minecraftServer.storageSource;
 
+				if (!minecraftServer.isStopped())
+					minecraftServer.close();
+
+				/*
 				ThreadHelper.runWithTimeout(minecraftServer::close, 10000);
 				if (minecraftServer.getRunningThread().isAlive())
 					minecraftServer.getRunningThread().stop();
+
+				 */
 
 				if (lockManager.lock.isValid()) {
 					try {
 						lockManager.close();
 					} catch (IOException e) {
-						sendResponse(event, "Error unlocking save file: " + e.getMessage(), false);
+						event.getChannel().sendMessage("Error unlocking save file: " + e.getMessage()).submit();
+						DiscordChat.LOGGER.error("Error unlocking save file: {}", e.getMessage());
 					}
 				}
 			});
@@ -67,7 +73,8 @@ public class RestartCommand extends GrimmSlashCommand {
 			event.getJDA().shutdown();
 			DiscordChat.BOT_INSTANCE.shutdown();
 		} catch (IOException e) {
-			sendResponse(event, "Error spawning process: " + e.getMessage(), false);
+			event.getChannel().sendMessage("Error spawning process: " + e.getMessage()).submit();
+			DiscordChat.LOGGER.error("Error spawning process: {}", e.getMessage());
 		}
 	}
 }
