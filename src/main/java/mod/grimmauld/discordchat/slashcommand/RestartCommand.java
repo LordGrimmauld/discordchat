@@ -48,10 +48,13 @@ public class RestartCommand extends GrimmSlashCommand {
 
 		try {
 			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> {
-				SaveFormat.LevelSave lockManager = minecraftServer.storageSource;
 
-				if (!minecraftServer.isStopped())
-					minecraftServer.close();
+				try {
+					if (!minecraftServer.isStopped())
+						minecraftServer.close();
+				} catch (Exception e) {
+					event.getChannel().sendMessage("Error stopping server (proceeding anyways): " + e.getMessage()).submit();
+				}
 
 				/*
 				ThreadHelper.runWithTimeout(minecraftServer::close, 10000);
@@ -59,15 +62,6 @@ public class RestartCommand extends GrimmSlashCommand {
 					minecraftServer.getRunningThread().stop();
 
 				 */
-
-				if (lockManager.lock.isValid()) {
-					try {
-						lockManager.close();
-					} catch (IOException e) {
-						event.getChannel().sendMessage("Error unlocking save file: " + e.getMessage()).submit();
-						DiscordChat.LOGGER.error("Error unlocking save file: {}", e.getMessage());
-					}
-				}
 			});
 			Runtime.getRuntime().exec(shPath.toString());
 			event.getJDA().shutdown();
