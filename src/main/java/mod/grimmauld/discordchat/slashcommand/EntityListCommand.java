@@ -22,7 +22,7 @@ public class EntityListCommand extends GrimmSlashCommand {
 
 	@Override
 	protected void executeChecked(SlashCommandEvent event) {
-		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+		DiscordChat.SERVER_INSTANCE.runIfPresentAndAlive(server -> {
 			if (!DiscordBot.isOp(event.getMember())) {
 				sendLackingPermissionResponse(event);
 				return false;

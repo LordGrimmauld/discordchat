@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.util;
+package mod.grimmauld.discordchat.util.container;
 
 import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordBot;

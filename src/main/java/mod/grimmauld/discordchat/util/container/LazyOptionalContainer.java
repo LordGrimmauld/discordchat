@@ -1,4 +1,4 @@
-package mod.grimmauld.discordchat.util;
+package mod.grimmauld.discordchat.util.container;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
@@ -36,6 +36,10 @@ public class LazyOptionalContainer<T> {
 		if (object != null)
 			return Optional.of(action.apply(object));
 		return Optional.empty();
+	}
+
+	public boolean isPresent() {
+		return supplier != null || object != null;
 	}
 
 	public boolean ifPresent(Consumer<T> action) {

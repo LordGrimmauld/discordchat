@@ -29,7 +29,7 @@ public class TpsCommand extends GrimmSlashCommand {
 
 	@Override
 	protected void executeChecked(SlashCommandEvent event) {
-		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+		DiscordChat.SERVER_INSTANCE.runIfPresentAndAlive(server -> {
 			double meanTickTime = mean(server.tickTimes) * 1.0E-6D;
 			double meanTPS = meanTickTime <= 50 ? 20 : (1000.0 / meanTickTime);
 			double x = MathHelper.clamp((meanTPS - 5) / 15, 0, 1);

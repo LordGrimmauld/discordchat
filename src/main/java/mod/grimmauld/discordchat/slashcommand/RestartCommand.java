@@ -4,7 +4,6 @@ import mod.grimmauld.discordchat.Config;
 import mod.grimmauld.discordchat.DiscordBot;
 import mod.grimmauld.discordchat.DiscordChat;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.minecraft.world.storage.SaveFormat;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,23 +47,16 @@ public class RestartCommand extends GrimmSlashCommand {
 
 		try {
 			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> {
-
 				try {
 					if (!minecraftServer.isStopped())
 						minecraftServer.close();
 				} catch (Exception e) {
 					event.getChannel().sendMessage("Error stopping server (proceeding anyways): " + e.getMessage()).submit();
 				}
-
-				/*
-				ThreadHelper.runWithTimeout(minecraftServer::close, 10000);
-				if (minecraftServer.getRunningThread().isAlive())
-					minecraftServer.getRunningThread().stop();
-
-				 */
 			});
+			DiscordChat.SERVER_INSTANCE.invalidate();
+			DiscordChat.CAN_KILL_PROCESS.forceValue(true);
 			Runtime.getRuntime().exec(shPath.toString());
-			event.getJDA().shutdown();
 			DiscordChat.BOT_INSTANCE.shutdown();
 		} catch (IOException e) {
 			event.getChannel().sendMessage("Error spawning process: " + e.getMessage()).submit();

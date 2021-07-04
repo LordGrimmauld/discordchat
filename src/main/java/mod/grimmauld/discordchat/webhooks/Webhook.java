@@ -1,7 +1,7 @@
 package mod.grimmauld.discordchat.webhooks;
 
 import mod.grimmauld.discordchat.DiscordChat;
-import mod.grimmauld.discordchat.util.LazyOptionalContainer;
+import mod.grimmauld.discordchat.util.container.LazyOptionalContainer;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;

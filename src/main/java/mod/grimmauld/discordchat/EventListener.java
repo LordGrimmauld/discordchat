@@ -6,7 +6,7 @@ import mod.grimmauld.discordchat.commands.StopBotCommand;
 import mod.grimmauld.discordchat.commands.TellDiscordCommand;
 import mod.grimmauld.discordchat.message_queue.ChatEventMessage;
 import mod.grimmauld.discordchat.message_queue.DiscordMessageQueue;
-import mod.grimmauld.discordchat.util.ThreadHelper;
+import mod.grimmauld.discordchat.util.async.AsyncTask;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
@@ -41,12 +41,14 @@ public class EventListener {
 			}
 		});
 		DiscordMessageQueue.INSTANCE.queue("Server started", DiscordChat.LOGGER::warn);
+		AsyncTask.startTaskTicking();
+		DiscordChat.CAN_KILL_PROCESS.start();
 	}
 
 	@SubscribeEvent
 	public static void onServerStopped(FMLServerStoppedEvent event) {
 		DiscordMessageQueue.INSTANCE.queue("Server shutting down...", DiscordChat.LOGGER::warn);
-		ThreadHelper.runAfter(() -> DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown), 3600000);
+		// ThreadHelper.runAfter(() -> DiscordChat.BOT_INSTANCE.ifPresent(DiscordBot::shutdown), 3600000);
 	}
 
 	@SubscribeEvent

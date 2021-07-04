@@ -18,7 +18,7 @@ public class ListCommand extends GrimmSlashCommand {
 
 	@Override
 	protected void executeChecked(SlashCommandEvent event) {
-		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+		DiscordChat.SERVER_INSTANCE.runIfPresentAndAlive(server -> {
 			StringBuilder builder = new StringBuilder();
 			EmbedBuilder eb = new EmbedBuilder();
 			eb.setTitle("Players on Server");

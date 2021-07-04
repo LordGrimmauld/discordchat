@@ -19,7 +19,7 @@ public class RunCommand extends GrimmSlashCommand {
 
 	@Override
 	protected void executeChecked(SlashCommandEvent event) {
-		DiscordChat.SERVER_INSTANCE.runIfPresent(server -> {
+		DiscordChat.SERVER_INSTANCE.runIfPresentAndAlive(server -> {
 			StringBuilder builder = new StringBuilder();
 			String cmd = event.getOptions().stream().filter(optionMapping -> optionMapping.getName().equals("cmd") &&
 				optionMapping.getType() == OptionType.STRING).map(OptionMapping::getAsString).findFirst().orElse("");

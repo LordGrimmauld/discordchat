@@ -20,6 +20,7 @@ public class Config {
 	public static final ForgeConfigSpec.IntValue PROJECT_ID;
 	public static final ForgeConfigSpec.ConfigValue<String> WEBHOOK_URL;
 	public static final ForgeConfigSpec.ConfigValue<String> RESTART_SH;
+	public static final ForgeConfigSpec.LongValue ASYNC_TASK_CHECK_INTEVAL;
 
 	static {
 		ForgeConfigSpec.Builder commonBuilder = new ForgeConfigSpec.Builder();
@@ -27,6 +28,7 @@ public class Config {
 		commonBuilder.comment("General settings").push("general");
 		TOKEN = commonBuilder.comment("Discord Bot token").define("token", "");
 		PROJECT_ID = commonBuilder.comment("Modpack Curseforge project ID").defineInRange("id", 0, 0, Integer.MAX_VALUE);
+		ASYNC_TASK_CHECK_INTEVAL = commonBuilder.comment("How often should asynchronous tasks be checked [ms]").defineInRange("async_tick_cycle", 500, 0, Long.MAX_VALUE);
 		PREFIX = commonBuilder.comment("Discord Bot Prefix").define("prefix", "/");
 		OP_ROLE_NAME = commonBuilder.comment("Name of the role empowering people to use operator commands").define("role", "op");
 		REDIRECT_CHANNEL_ID = commonBuilder.comment("Channel to redirect messages to and from the server").define("channel", "");

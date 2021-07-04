@@ -76,12 +76,12 @@ public class DiscordBot extends ListenerAdapter {
 			.append("] ");
 
 		if (!msg.getContentStripped().isEmpty())
-			DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
+			DiscordChat.SERVER_INSTANCE.ifPresentAndAlive(server -> server
 				.getPlayerList()
 				.getPlayers()
 				.forEach(player -> player.sendMessage(playerNameComponent.copy().append(sanitize(msg.getContentStripped()))
 					.withStyle(style -> style.withClickEvent(null)), player.getUUID())));
-		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresent(server -> server
+		msg.getAttachments().forEach(attachment -> DiscordChat.SERVER_INSTANCE.ifPresentAndAlive(server -> server
 			.getPlayerList()
 			.getPlayers()
 			.stream()
@@ -122,7 +122,7 @@ public class DiscordBot extends ListenerAdapter {
 		}
 
 		StringBuilder builder = new StringBuilder();
-		DiscordChat.SERVER_INSTANCE.ifPresent(server -> server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack())
+		DiscordChat.SERVER_INSTANCE.ifPresentAndAlive(server -> server.getCommands().performCommand(CommandSourceRedirectedOutput.of(server.createCommandSourceStack())
 			.withName(event.getMember().getUser().getName())
 			.withHook(text -> builder.append(text.getString()).append("\n")), "whitelist add " + playerName[1]));
 
