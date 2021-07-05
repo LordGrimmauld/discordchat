@@ -12,6 +12,7 @@
   "mixins": [
     "CrashReportSaveMixin",
     "KeepServerAliveMixin",
-    "SparkPlatformCreationMixin"
+    "SparkPlatformCreationMixin",
+    "TerminalHandlerNoCrashMixin"
   ]
 }
