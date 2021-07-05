@@ -48,8 +48,11 @@ public class RestartCommand extends GrimmSlashCommand {
 		try {
 			DiscordChat.SERVER_INSTANCE.ifPresent(minecraftServer -> {
 				try {
-					if (!minecraftServer.isStopped())
+					if (!minecraftServer.isStopped()) {
+						minecraftServer.halt(false);
+						Thread.sleep(1000);
 						minecraftServer.close();
+					}
 				} catch (Exception e) {
 					event.getChannel().sendMessage("Error stopping server (proceeding anyways): " + e.getMessage()).submit();
 				}
