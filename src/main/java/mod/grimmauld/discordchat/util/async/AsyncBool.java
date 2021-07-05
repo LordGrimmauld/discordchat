@@ -81,7 +81,7 @@ public class AsyncBool extends AsyncTask {
 			else
 				onTurnFalse();
 		}
-		value.set(check.get());
+	//	value.set(check.get());
 	}
 
 	protected void onTurnTrue() {
