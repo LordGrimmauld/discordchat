@@ -51,7 +51,8 @@ public class RestartCommand extends GrimmSlashCommand {
 					if (!minecraftServer.isStopped()) {
 						minecraftServer.halt(false);
 						Thread.sleep(1000);
-						minecraftServer.close();
+						if (!minecraftServer.isStopped())
+							minecraftServer.close();
 					}
 				} catch (Exception e) {
 					event.getChannel().sendMessage("Error stopping server (proceeding anyways): " + e.getMessage()).submit();
